@@ -22,11 +22,11 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get -y install libgtk2.0-0 libxtst6 xvfb default-jdk maven curl
 
 # Install ACE and accept the license
-# RUN mkdir /opt/ibm && echo Downloading package http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/integration/${ACE_VERSION}-ACE-LINUX64-DEVELOPER.tar.gz && \
-#     curl -sL http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/integration/${ACE_VERSION}-ACE-LINUX64-DEVELOPER.tar.gz | tar xvz --directory /opt/ibm
+RUN mkdir /opt/ibm && echo Downloading package http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/integration/${ACE_VERSION}-ACE-LINUX64-DEVELOPER.tar.gz && \
+    curl -sL http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/integration/${ACE_VERSION}-ACE-LINUX64-DEVELOPER.tar.gz | tar xvz --directory /opt/ibm
 
 # To use a downloaded copy instead of downloading it, use the below part
-ADD ${ACE_VERSION}-ACE-LINUX64-DEVELOPER.tar.gz /opt/ibm
+#ADD ${ACE_VERSION}-ACE-LINUX64-DEVELOPER.tar.gz /opt/ibm
 
 RUN mv /opt/ibm/ace-${ACE_VERSION} /opt/ibm/ace-11 \
   && /opt/ibm/ace-11/ace make registry global accept license deferred \
