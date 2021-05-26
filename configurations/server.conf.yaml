@@ -1,0 +1,15 @@
+defaultQueueManager: 'test2'
+RestAdminListener:
+  caPath: /home/aceuser/adminssl
+  requireClientCert: true
+  sslCertificate: /home/aceuser/adminssl/tls.crt.pem
+  sslPassword: /home/aceuser/adminssl/tls.key.pem
+Statistics:
+  Resource:
+    reportingOn: true
+  Snapshot:
+    accountingOrigin: none
+    nodeDataLevel: basic
+    outputFormat: json
+    publicationOn: active
+    threadDataLevel: none
