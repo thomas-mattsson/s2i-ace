@@ -1,0 +1,75 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: ace-integration-server-deployment
+spec:
+  params:
+    - name: templateFileName
+      Description: Deployment template file
+      type: string
+    - name: integrationServerName
+      Description: Name of the integration server to be deployed
+      type: string
+    - name: integrationServerNamespace
+      Description: Name of the project where integration server should be deployed
+      type: string
+    - name: license
+      default: "L-APEH-BY5CY7"
+      Description: Please refer to http://ibm.biz/acelicense to select the appropriate LI & use fields
+      type: string
+    - name: licenseUse
+      default: "CloudPakForIntegrationProduction"
+      Description: Please refer to http://ibm.biz/acelicense to select the appropriate LI & use fields
+      type: string
+    - name: licenseAccept
+      Description: Accept Terms and Conditions - Please refer to http://ibm.biz/acelicense to select the appropriate LI & use fields
+      type: string
+  resources:
+    inputs:
+      - name: source
+        type: git
+      - name: runtime-image
+        type: image
+  steps:
+    - name: view-git-files
+      resources: {}
+      command:
+        - ls
+        - -al
+        - /workspace/source/$(params.templateFileName)
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+      volumeMounts:
+        - name: deployment-files
+          mountPath: /deployment-files
+      workingDir: /deployment-files
+    - name: gen-oc-process-script
+      command:
+        - /bin/sh
+        - '-c'
+      args:
+        - |-
+          echo "oc process -f /workspace/source/$(params.templateFileName) -p INTEGRATION_SERVER_NAME=$(params.integrationServerName) -p INTEGRATION_SERVER_NAMESPACE=$(params.integrationServerNamespace) -p IS_IMAGE=$(resources.inputs.runtime-image.url) -p LICENSE=$(params.license) -p LICENSE_USE=$(params.licenseUse) -p LICENSE_ACCEPT=$(params.licenseAccept) > deployment-resources.yaml" > oc-process-cmd.sh
+          echo "Generated oc process script command"
+          cat oc-process-cmd.sh
+          chmod a+x oc-process-cmd.sh
+          ./oc-process-cmd.sh
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+      volumeMounts:
+        - name: deployment-files
+          mountPath: /deployment-files
+      workingDir: /deployment-files
+    - name: oc-apply-resources
+      resources: {}
+      command:
+        - oc
+        - apply 
+        - '-f' 
+        - deployment-resources.yaml 
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+      volumeMounts:
+        - name: deployment-files
+          mountPath: /deployment-files
+      workingDir: /deployment-files
+  volumes:
+    - emptyDir: {}
+      name: deployment-files
