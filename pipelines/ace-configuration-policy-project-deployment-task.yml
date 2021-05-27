@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: ace-configuration-serverconf-deployment
+  name: ace-configuration-policy-project-deployment
 spec:
   params:
     - description: Name of the configuration to be deployed
@@ -13,8 +13,8 @@ spec:
     - description: Deployment template file
       name: templateFileName
       type: string
-    - description: server.conf.yaml file
-      name: serverConfFileName
+    - description: path to policy project
+      name: policyProjectDir
       type: string
   resources:
     inputs:
@@ -33,14 +33,29 @@ spec:
           name: deployment-files
       workingDir: /deployment-files
     - args:
+        - |-
+          microdnf install zip
+          zip -r /workspace/pp.zip /workspace/source/$(params.policyProjectDir)
+      command:
+        - /bin/sh
+        - '-c'
+      # TODO: better image that has zip in it from the start
+      image: 'registry.access.redhat.com/ubi7/ubi-minimal:latest'
+      name: zip-profile-project
+      resources: {}
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - mountPath: /deployment-files
+          name: deployment-files
+    - args:
         - >-
-          serverConfFilePath=/workspace/source/$(params.serverConfFileName) 
-          data=$( base64 $serverConfFilePath )
+          data=$( base64 /workspace/pp.zip )
 
           echo "oc process -f /workspace/source/$(params.templateFileName) -p
           CONFIGURATION_NAME=$(params.configurationName) -p
           CONFIGURATION_NAMESPACE=$(params.configurationNamespace) -p
-          CONFIGURATION_TYPE=serverconf -p DATA='$data' >
+          CONFIGURATION_TYPE=policyproject -p DATA='$data' >
           deployment-resources.yaml" > oc-process-cmd.sh
 
           echo "Generated oc process script command"
