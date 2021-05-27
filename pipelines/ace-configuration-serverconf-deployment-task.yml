@@ -1,7 +1,3 @@
-apiVersion: tekton.dev/v1beta1
-kind: Task
-metadata:
-  name: ace-configuration-serverconf-deployment
 spec:
   params:
     - description: Name of the configuration to be deployed
@@ -40,7 +36,8 @@ spec:
           echo "oc process -f /workspace/source/$(params.templateFileName) -p
           CONFIGURATION_NAME=$(params.configurationName) -p
           CONFIGURATION_NAMESPACE=$(params.configurationNamespace) -p
-          DATA='$data' > deployment-resources.yaml" > oc-process-cmd.sh
+          CONFIGURATION_TYPE=serverconf -p DATA='$data' >
+          deployment-resources.yaml" > oc-process-cmd.sh
 
           echo "Generated oc process script command"
 
