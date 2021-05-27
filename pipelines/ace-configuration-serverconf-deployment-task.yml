@@ -1,3 +1,7 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: ace-configuration-serverconf-deployment
 spec:
   params:
     - description: Name of the configuration to be deployed
