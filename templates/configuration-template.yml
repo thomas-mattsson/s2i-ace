@@ -7,9 +7,12 @@ parameters:
     required: true
   - name: DATA
     required: true
-    description: The server.conf.yml content as base64
+    description: The content as base64
+  - name: CONFIGURATION_TYPE
+    required: true
+    description: The type of the configuration
 metadata:
- name: configuration-serverconf-template
+ name: configuration-template
 objects:
   - apiVersion: appconnect.ibm.com/v1beta1
     kind: Configuration
@@ -19,4 +22,4 @@ objects:
     spec:
       contents: >-
         ${{DATA}}
-      type: serverconf
+      type: ${CONFIGURATION_TYPE}
