@@ -1,0 +1,92 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: ace-configuration-policy-project-deployment
+spec:
+  params:
+    - description: Name of the configuration to be deployed
+      name: configurationName
+      type: string
+    - description: Name of the project where configuration should be deployed
+      name: configurationNamespace
+      type: string
+    - description: Deployment template file
+      name: templateFileName
+      type: string
+    - description: path to policy project
+      name: policyProjectDir
+      type: string
+  resources:
+    inputs:
+      - name: source
+        type: git
+  steps:
+    - command:
+        - ls
+        - '-al'
+        - /workspace/source/$(params.templateFileName)
+      image: 'image-registry.openshift-image-registry.svc:5000/openshift/cli:latest'
+      name: view-git-files
+      resources: {}
+      volumeMounts:
+        - mountPath: /deployment-files
+          name: deployment-files
+      workingDir: /deployment-files
+    - args:
+        - |-
+          microdnf install zip
+          zip -r /workspace/pp.zip /workspace/source/$(params.policyProjectDir)
+      command:
+        - /bin/sh
+        - '-c'
+      # TODO: better image that has zip in it from the start
+      image: 'registry.access.redhat.com/ubi7/ubi-minimal:latest'
+      name: zip-profile-project
+      resources: {}
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - mountPath: /deployment-files
+          name: deployment-files
+    - args:
+        - >-
+          data=$( base64 /workspace/pp.zip )
+
+          echo "oc process -f /workspace/source/$(params.templateFileName) -p
+          CONFIGURATION_NAME=$(params.configurationName) -p
+          CONFIGURATION_NAMESPACE=$(params.configurationNamespace) -p
+          CONFIGURATION_TYPE=policyproject -p DATA='$data' >
+          deployment-resources.yaml" > oc-process-cmd.sh
+
+          echo "Generated oc process script command"
+
+          cat oc-process-cmd.sh
+
+          chmod a+x oc-process-cmd.sh
+
+          ./oc-process-cmd.sh
+      command:
+        - /bin/sh
+        - '-c'
+      image: 'image-registry.openshift-image-registry.svc:5000/openshift/cli:latest'
+      name: gen-oc-process-script
+      resources: {}
+      volumeMounts:
+        - mountPath: /deployment-files
+          name: deployment-files
+      workingDir: /deployment-files
+    - command:
+        - oc
+        - apply
+        - '-f'
+        - deployment-resources.yaml
+      image: 'image-registry.openshift-image-registry.svc:5000/openshift/cli:latest'
+      name: oc-apply-resources
+      resources: {}
+      volumeMounts:
+        - mountPath: /deployment-files
+          name: deployment-files
+      workingDir: /deployment-files
+  volumes:
+    - emptyDir: {}
+      name: deployment-files
