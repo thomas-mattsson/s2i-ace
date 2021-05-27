@@ -13,6 +13,10 @@ parameters:
     value: CloudPakForIntegrationProduction
   - name: LICENSE_ACCEPT
     required: true
+  - name: VERSION
+    value: 11.0.0.11-r2
+  - name: CONFIGURATIONS
+    value: '[]'
 metadata:
  name: integration-server-template
 objects:
@@ -22,6 +26,7 @@ objects:
       name: ${INTEGRATION_SERVER_NAME}
       namespace: ${INTEGRATION_SERVER_NAMESPACE}
     spec:
+      createDashboardUsers: true
       adminServerSecure: true
       designerFlowsOperationMode: disabled
       license:
@@ -32,6 +37,7 @@ objects:
         containers:
           runtime:
             image: ${IS_IMAGE}
+            imagePullPolicy: Always
             resources:
               limits:
                 cpu: 300m
@@ -44,4 +50,5 @@ objects:
         timeout: 120s
       service:
         endpointType: http
-      version: 11.0.0.11-r2
+      version: ${VERSION}
+      configurations: ${{CONFIGURATIONS}}
