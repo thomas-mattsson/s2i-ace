@@ -24,6 +24,18 @@ spec:
     - name: licenseAccept
       Description: Accept Terms and Conditions - Please refer to http://ibm.biz/acelicense to select the appropriate LI & use fields
       type: string
+    - default: 11.0.0.11-r2
+      description: >-
+        The version of app connect that the input image represents. Version
+        number must match the license. Please refer to http://ibm.biz/acelicense
+      name: version
+      type: string
+    - default: '[]'
+      description: >-
+        List of configurations to use for the integration server in the format
+        ["conf1", "conf2"]
+      name: configurations
+      type: string
   resources:
     inputs:
       - name: source
@@ -47,11 +59,22 @@ spec:
         - /bin/sh
         - '-c'
       args:
-        - |-
-          echo "oc process -f /workspace/source/$(params.templateFileName) -p INTEGRATION_SERVER_NAME=$(params.integrationServerName) -p INTEGRATION_SERVER_NAMESPACE=$(params.integrationServerNamespace) -p IS_IMAGE=$(resources.inputs.runtime-image.url) -p LICENSE=$(params.license) -p LICENSE_USE=$(params.licenseUse) -p LICENSE_ACCEPT=$(params.licenseAccept) > deployment-resources.yaml" > oc-process-cmd.sh
+        - >-
+          echo "oc process -f /workspace/source/$(params.templateFileName) -p
+          INTEGRATION_SERVER_NAME=$(params.integrationServerName) -p
+          INTEGRATION_SERVER_NAMESPACE=$(params.integrationServerNamespace) -p
+          IS_IMAGE=$(resources.inputs.runtime-image.url) -p
+          LICENSE=$(params.license) -p LICENSE_USE=$(params.licenseUse) -p
+          LICENSE_ACCEPT=$(params.licenseAccept) -p VERSION=$(params.version) -p
+          CONFIGURATIONS='$(params.configurations)' > deployment-resources.yaml"
+          > oc-process-cmd.sh
+
           echo "Generated oc process script command"
+
           cat oc-process-cmd.sh
+
           chmod a+x oc-process-cmd.sh
+
           ./oc-process-cmd.sh
       image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
       volumeMounts:
