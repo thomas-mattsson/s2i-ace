@@ -72,6 +72,8 @@ spec:
 
           ENV LICENSE=$(params.LICENSE)
 
+          # To support JVM debug EXPOSE 8888
+
           COPY --from=0 --chown=aceuser:0 /tmp/*.bar
           /home/aceuser/initial-config/bars/" >> /gen-source/Dockerfile.gen
 
@@ -92,6 +94,8 @@ spec:
         - '--storage-driver=overlay'
         - '--tls-verify=$(params.TLSVERIFY)'
         - '--layers'
+        - '--label'
+        - git_commit=$(resources.inputs.source.revision)
         - '-f'
         - /gen-source/Dockerfile.gen
         - '-t'
