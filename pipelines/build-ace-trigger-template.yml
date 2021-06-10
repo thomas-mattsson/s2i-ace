@@ -1,0 +1,43 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: build-ace-trigger-template
+spec:
+  params:
+    - name: git-revision
+    - name: git-commit-message
+    - name: git-repo-url
+    - name: git-repo-name
+    - name: content-type
+    - name: pusher-name
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        annotations: {}
+        labels:
+          tekton.dev/pipeline: build-integration-server
+        name: build-$(tt.params.git-repo-name)-$(uid)
+        namespace: <namespace>
+      spec:
+        params: []
+        pipelineRef:
+          name: build-integration-server
+        resources:
+          - name: source
+            resourceSpec:
+              params:
+                - name: url
+                  value: $(tt.params.git-repo-url)
+                - name: revision
+                  value: $(tt.params.git-revision)
+              type: git
+          - name: target
+            resourceSpec:
+              params:
+                - name: url
+                  value: >-
+                    image-registry.openshift-image-registry.svc:5000/<namespace>/$(tt.params.git-repo-name):$(uid)
+              type: image
+        status: null
+        workspaces: []

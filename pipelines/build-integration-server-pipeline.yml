@@ -1,0 +1,29 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-integration-server
+spec:
+  resources:
+    - name: source
+      type: git
+    - name: target
+      type: image
+  tasks:
+    - name: s2i-ace-maven
+      params:
+        - name: PATH_CONTEXT
+          value: .
+        - name: TLSVERIFY
+          value: 'false'
+        - name: LICENSE
+          value: accept
+      resources:
+        inputs:
+          - name: source
+            resource: source
+        outputs:
+          - name: builtImage
+            resource: target
+      taskRef:
+        kind: Task
+        name: s2i-ace-maven
