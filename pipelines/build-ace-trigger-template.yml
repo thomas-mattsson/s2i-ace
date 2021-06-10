@@ -16,13 +16,13 @@ spec:
       metadata:
         annotations: {}
         labels:
-          tekton.dev/pipeline: build-ace
+          tekton.dev/pipeline: build-integration-server
         name: build-$(tt.params.git-repo-name)-$(uid)
         namespace: <namespace>
       spec:
         params: []
         pipelineRef:
-          name: build-ace
+          name: build-integration-server
         resources:
           - name: source
             resourceSpec:
