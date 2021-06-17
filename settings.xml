@@ -196,8 +196,8 @@ under the License.
       </activation>
 	  
 	  <properties>
-		<ace.dir>/opt/ibm/ace-11/tools</ace.dir>
-		<ace.rundir>/opt/ibm/ace-11/server/bin</ace.rundir>
+		<ace.dir>/opt/ibm/ace-12/tools</ace.dir>
+		<ace.rundir>/opt/ibm/ace-12/server/bin</ace.rundir>
 		<eclipse.workspace>/home/aceuser/workspace</eclipse.workspace>
 		<perform.workspace>/home/aceuser/workspace</perform.workspace>
         <!--
