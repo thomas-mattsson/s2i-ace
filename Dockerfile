@@ -6,12 +6,12 @@ RUN git clone https://github.com/ot4i/ace-maven-plugin.git \
 
 FROM ubuntu:16.04
 
-ARG ACE_VERSION=11.0.0.12
+ARG ACE_VERSION=12.0.1.0
 
 LABEL maintainer="Thomas Mattsson <thomas.mattsson@se.ibm.com>"
 LABEL io.k8s.description="Platform for building App Connect Enterprise applications into integration server using Maven" \
-     io.k8s.display-name="App Connect Enterprise 11.0.0.12" \
-     io.openshift.tags="builder,ace,11.0,11.0.0.12" \
+     io.k8s.display-name="App Connect Enterprise 12.0.1.0" \
+     io.openshift.tags="builder,ace,12.0,12.0.1.0" \
      io.openshift.s2i.scripts-url=image:///usr/local/s2i
 
 # Prevent errors about having no terminal when using apt-get
