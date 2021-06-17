@@ -31,6 +31,7 @@ RUN mkdir /opt/ibm && echo Downloading package http://public.dhe.ibm.com/ibmdl/e
 RUN mv /opt/ibm/ace-${ACE_VERSION} /opt/ibm/ace-11 \
   && /opt/ibm/ace-11/ace make registry global accept license deferred \
   && useradd --uid 1001 --create-home --home-dir /home/aceuser --shell /bin/bash -g 0 -G mqbrkrs aceuser \
+  && mkdir -p /home/aceuser/.swt/lib/linux/x86_64/ \
   && ln -s /usr/lib/jni/libswt-* /home/aceuser/.swt/lib/linux/x86_64/
 
 USER aceuser
