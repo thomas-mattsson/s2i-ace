@@ -44,19 +44,25 @@ Besides the pom.xml files needed for the ace projects, a pom.xml is also needed 
 
 ### Pipeline for building this image itself
 
-Add [pipelines/build-s2i-ace-maven-pipeline.yml](pipelines/build-s2i-ace-maven-pipeline.yml) as a Openshift Pipeline. Make sure to update the namespace name to match your Openshift project.
+Add [tekton/build-s2i-ace-maven-pipeline.yml](tekton/build-s2i-ace-maven-pipeline.yml) as a Openshift Pipeline. Make sure to update the namespace name to match your Openshift project.
 
 Pipeline takes a git source as input (this git repo) and an image output. Use `image-registry.openshift-image-registry.svc:5000/mvp/s2i-ace-maven:11.0.0.12` as image URL for using the internal image registry and using the tag with the currently matching version. If using other image repository or tag, make sure to update the task below to match.
 
 ### Task for building an integration server
 
-Add [pipelines/s2i-ace-maven-task.yml](pipelines/s2i-ace-maven-task.yml) as a Openshift Pipeline task. Make sure to update the namespace name to match your Openshift project.
+Add [tekton/s2i-ace-maven-task.yml](tekton/s2i-ace-maven-task.yml) as a Openshift Pipeline task. Make sure to update the namespace name to match your Openshift project.
 
 Task is also setup to use a PVC with the name `s2i-ace-maven-varlibcontainers-pvc` that would need to be created with a block storage class. This will be used for storing the s2i container and the resulting integration servers.
 
 #### Creating the pipeline
 
 Create a pipeline using this task. Follow the task parameter descriptions to configure it.
+
+### Deploying the integration server
+
+There are several tasks for deploying integration servers based on template files.
+
+#### Configurations
 
 ## Reference: Creating a basic S2I builder image  
 
