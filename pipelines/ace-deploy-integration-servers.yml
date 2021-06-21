@@ -1,0 +1,34 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: ace-deploy-integration-servers
+spec:
+  params:
+    - default: templates/integration-server-template.yml
+      description: Integration server template
+      name: integrationServerTemplateFileName
+      type: string
+    - description: Name of the project where integration server should be deployed
+      name: integrationServerNamespace
+      type: string
+    - description: Directory containing the environment files
+      name: envFilesDirectory
+      type: string
+  resources:
+    inputs:
+      - name: source
+        type: git
+  steps:
+    - args:
+        - |-
+          for f in /workspace/source/$(params.envFilesDirectory)/*.env
+          do
+            echo "Processing integration server file $f"
+            oc process -f /workspace/source/$(params.integrationServerTemplateFileName) -p INTEGRATION_SERVER_NAMESPACE=$(params.integrationServerNamespace) --param-file=$f | oc apply -f -
+          done
+      command:
+        - /bin/bash
+        - '-c'
+      image: 'image-registry.openshift-image-registry.svc:5000/openshift/cli:latest'
+      name: apply-integration-servers
+      resources: {}
