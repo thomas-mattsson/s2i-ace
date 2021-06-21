@@ -56,7 +56,7 @@ Task is also setup to use a PVC with the name `s2i-ace-maven-varlibcontainers-pv
 
 #### Creating the pipeline
 
-Create a pipeline using this task. Follow the task parameter descriptions to configure it.
+Pipeline at [tekton/build-and-deploy-pipeline.yml](tekton/build-and-deploy-pipeline.yml) is an example on how to have an ingration with github, building the integration server with new tag for each build, also tagging with `latest`, and deploying to a dev environment using templates.
 
 ### Deploying the integration server
 
