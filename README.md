@@ -54,10 +54,6 @@ Add [tekton/s2i-ace-maven-task.yml](tekton/s2i-ace-maven-task.yml) as a Openshif
 
 Task is also setup to use a PVC with the name `s2i-ace-maven-varlibcontainers-pvc` that would need to be created with a block storage class. This will be used for storing the s2i container and the resulting integration servers.
 
-#### Creating the pipeline
-
-Pipeline at [tekton/build-and-deploy-pipeline.yml](tekton/build-and-deploy-pipeline.yml) is an example on how to have an ingration with github, building the integration server with new tag for each build, also tagging with `latest`, and deploying to a dev environment using templates.
-
 ### Deploying the integration server
 
 There are several tasks for deploying integration servers based on template files.
@@ -74,6 +70,10 @@ There are several tasks for deploying integration servers based on template file
 
 [tekton/ace-configuration-policy-project-deployment-task.yml](tekton/ace-configuration-policy-project-deployment-task.yml)
 [tekton/ace-configuration-serverconf-deployment-task.yml](tekton/ace-configuration-serverconf-deployment-task.yml)
+
+#### Creating the pipeline
+
+Pipeline at [tekton/build-and-deploy-pipeline.yml](tekton/build-and-deploy-pipeline.yml) is an example on how to have an ingration with github, building the integration server with new tag for each build, also tagging with `latest`, and deploying to a dev environment using templates.
 
 ## Reference: Creating a basic S2I builder image  
 
