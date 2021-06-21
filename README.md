@@ -62,7 +62,18 @@ Create a pipeline using this task. Follow the task parameter descriptions to con
 
 There are several tasks for deploying integration servers based on template files.
 
-#### Configurations
+#### Deploying single integration server based on template and parameters
+
+[tekton/ace-integration-server-deployment-task.yml](tekton/ace-integration-server-deployment-task.yml)
+
+#### Deploying multiple integration servers based on template and parameter files
+
+[tekton/ace-deploy-integration-servers-task.yml](tekton/ace-deploy-integration-servers-task.yml)
+
+#### Deploying configurations based on template
+
+[tekton/ace-configuration-policy-project-deployment-task.yml](tekton/ace-configuration-policy-project-deployment-task.yml)
+[tekton/ace-configuration-serverconf-deployment-task.yml](tekton/ace-configuration-serverconf-deployment-task.yml)
 
 ## Reference: Creating a basic S2I builder image  
 
