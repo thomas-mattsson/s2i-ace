@@ -1,0 +1,156 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-and-deploy
+spec:
+  finally:
+    - name: github-set-status-final
+      params:
+        - name: GITHUB_HOST_URL
+          value: github.ibm.com
+        - name: API_PATH_PREFIX
+          value: /api/v3
+        - name: GITHUB_TOKEN_SECRET_NAME
+          value: nordic-build-team-user-at-github
+        - name: GITHUB_TOKEN_SECRET_KEY
+          value: password
+        - name: TARGET_URL
+          value: >-
+            https://console-openshift-console.cpi4i-classic-fra02-b3c-e7d3d93b8b317d269525bf063b24f98d-0000.eu-de.containers.appdomain.cloud/k8s/ns/mvp/tekton.dev~v1beta1~PipelineRun/$(context.pipelineRun.name)
+        - name: DESCRIPTION
+          value: Integration server build failed
+        - name: CONTEXT
+          value: continuous-integration/tekton
+        - name: STATE
+          value: $(tasks.s2i-ace-maven.status)
+      resources:
+        inputs:
+          - name: source
+            resource: source
+      taskRef:
+        kind: Task
+        name: github-set-status
+  resources:
+    - name: source
+      type: git
+    - name: target
+      type: image
+  tasks:
+    - name: s2i-ace-maven
+      params:
+        - name: PATH_CONTEXT
+          value: .
+        - name: TLSVERIFY
+          value: 'false'
+        - name: LICENSE
+          value: accept
+      resources:
+        inputs:
+          - name: source
+            resource: source
+        outputs:
+          - name: builtImage
+            resource: target
+      runAfter:
+        - github-set-status
+      taskRef:
+        kind: Task
+        name: s2i-ace-maven
+    - name: github-set-status
+      params:
+        - name: GITHUB_HOST_URL
+          value: github.ibm.com
+        - name: API_PATH_PREFIX
+          value: /api/v3
+        - name: GITHUB_TOKEN_SECRET_NAME
+          value: nordic-build-team-user-at-github
+        - name: GITHUB_TOKEN_SECRET_KEY
+          value: password
+        - name: TARGET_URL
+          value: >-
+            https://console-openshift-console.cpi4i-classic-fra02-b3c-e7d3d93b8b317d269525bf063b24f98d-0000.eu-de.containers.appdomain.cloud/k8s/ns/mvp/tekton.dev~v1beta1~PipelineRun/$(context.pipelineRun.name)
+        - name: DESCRIPTION
+          value: Integration server build is pending
+        - name: CONTEXT
+          value: continuous-integration/tekton
+        - name: STATE
+          value: pending
+      resources:
+        inputs:
+          - name: source
+            resource: source
+      taskRef:
+        kind: Task
+        name: github-set-status
+    - name: label-pipeline
+      params:
+        - name: SCRIPT
+          value: oc $@
+        - name: ARGS
+          value:
+            - >-
+              label --overwrite PipelineRun $(context.pipelineRun.name)
+              git-revision=$(resources.inputs.source.revision)
+      resources:
+        inputs:
+          - name: source
+            resource: source
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+    - name: tag-image-with-latest
+      params:
+        - name: BUILDER_IMAGE
+          value: >-
+            registry.redhat.io/rhel8/buildah@sha256:180c4d9849b6ab0e5465d30d4f3a77765cf0d852ca1cb1efb59d6e8c9f90d467
+        - name: TLSVERIFY
+          value: 'false'
+      resources:
+        inputs:
+          - name: image
+            resource: target
+      runAfter:
+        - s2i-ace-maven
+      taskRef:
+        kind: Task
+        name: tag-image-with-latest
+    - name: deploy-to-dev
+      params:
+        - name: SCRIPT
+          value: |-
+            cat <<EOF | oc apply -f -
+            apiVersion: tekton.dev/v1beta1
+            kind: PipelineRun
+            metadata:
+              annotations: {}
+              labels:
+                tekton.dev/pipeline: deploy-ace-integration-server
+              name: deploy-of-$(context.pipelineRun.name)
+              namespace: mvp
+            spec:
+              params: []
+              pipelineRef:
+                name: deploy-ace-integration-server
+              resources:
+                - name: ace-pipeline-deploy
+                  resourceSpec:
+                    params:
+                      - name: url
+                        value: https://github.com/thomas-mattsson/s2i-ace-maven
+                      - name: revision
+                        value: main
+                    type: git
+                - name: runtime-image
+                  resourceSpec:
+                    params:
+                      - name: url
+                        value: image-registry.openshift-image-registry.svc:5000/mvp/seb-mvp-workspace:latest
+                    type: image
+              status: null
+              workspaces: []
+            EOF
+      runAfter:
+        - tag-image-with-latest
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
