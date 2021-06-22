@@ -45,6 +45,9 @@ RUN mkdir /home/aceuser/workspace \
   && mvn -f /home/aceuser/ace-maven-plugin/ace-maven-plugin/pom.xml -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -B package \
   && mvn install:install-file -Dfile=/home/aceuser/ace-maven-plugin/ace-maven-plugin/target/ace-maven-plugin-11.39.jar -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -DpomFile=/home/aceuser/ace-maven-plugin/ace-maven-plugin/pom.xml -DcreateChecksum=true -B
 
+# Copying mq runtime
+COPY --from=ibmcom/mq:9.2.2.0-r1 /opt/mqm /opt/mqm
+
 COPY ./s2i/bin/ /usr/local/s2i
 
 WORKDIR /home/aceuser/workspace
