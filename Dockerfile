@@ -1,6 +1,7 @@
 # Getting the ACE maven plugin source
 FROM alpine/git
 WORKDIR /app
+ADD https://api.github.com/repos/thomas-mattsson/ace-maven-plugin/git/refs/heads/ace12 version.json
 RUN git clone -b ace12 https://github.com/thomas-mattsson/ace-maven-plugin.git
 
 FROM ubuntu:16.04
