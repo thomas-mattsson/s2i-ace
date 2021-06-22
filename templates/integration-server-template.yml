@@ -46,6 +46,9 @@ objects:
                 cpu: 300m
                 memory: 300Mi
       replicas: 1
+      tracing:
+        enabled: true
+        # namespace: my-namespace
       router:
         timeout: 120s
       service:
