@@ -32,5 +32,5 @@ echo "---> Building application from source..."
 # -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn to disable transfer logging info. When at Maven 3.6.1 use --no-transfer-progress instead
 echo "Running mvn install in root directory"
 mvn -Dinstall.work.directory=/home/aceuser/ace-server -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -B -e -f pom.xml install \
- || find . -name createbartrace.txt -exec cat {} \;
+ || { find . -name createbartrace.txt -exec cat {} \; && exit 1 }
 
