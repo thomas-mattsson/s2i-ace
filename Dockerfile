@@ -20,7 +20,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # mqsicreatebar prereqs; need to run "Xvfb -ac :99 &" and "export DISPLAY=:99"
 # install jdk and maven for build support
-RUN apt-get update && apt-get -y install libgtk-3-dev libxtst6 xvfb default-jdk maven curl
+RUN apt-get update && apt-get -y install libgtk-3-dev dbus-x11 libxtst6 xvfb default-jdk maven curl
 
 # To use a downloaded copy instead of downloading it, use the below part
 #ADD ${ACE_VERSION}-ACE-LINUX64-DEVELOPER.tar.gz /opt/ibm
