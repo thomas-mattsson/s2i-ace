@@ -48,7 +48,7 @@ objects:
       replicas: 1
       tracing:
         enabled: true
-        # namespace: my-namespace
+        namespace: ${INTEGRATION_SERVER_NAMESPACE}
       router:
         timeout: 120s
       service:
