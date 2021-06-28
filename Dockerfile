@@ -1,8 +1,9 @@
 # Getting the ACE maven plugin source
 FROM alpine/git
 WORKDIR /app
-RUN git clone https://github.com/ot4i/ace-maven-plugin.git \
-  && rm -rf /app/ace-maven-plugin/ace-maven-plugin/{target,bin}
+# Make sure git clone is not being cached if there's been changes (https://stackoverflow.com/questions/36996046/how-to-prevent-dockerfile-caching-git-clone)
+ADD https://api.github.com/repos/thomas-mattsson/ace-maven-plugin/git/refs/heads/main version.json
+RUN git clone -b main https://github.com/thomas-mattsson/ace-maven-plugin.git
 
 FROM ubuntu:16.04
 
@@ -19,22 +20,24 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # mqsicreatebar prereqs; need to run "Xvfb -ac :99 &" and "export DISPLAY=:99"
 # install jdk and maven for build support
-RUN apt-get update && apt-get -y install libgtk2.0-0 libxtst6 xvfb default-jdk maven curl
-
-# Install ACE and accept the license
-RUN mkdir /opt/ibm && echo Downloading package http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/integration/${ACE_VERSION}-ACE-LINUX64-DEVELOPER.tar.gz && \
-    curl -sL http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/integration/${ACE_VERSION}-ACE-LINUX64-DEVELOPER.tar.gz | tar xvz --directory /opt/ibm
+RUN apt-get update && apt-get -y install libgtk-3-dev dbus-x11 libxtst6 xvfb default-jdk maven curl
 
 # To use a downloaded copy instead of downloading it, use the below part
 #ADD ${ACE_VERSION}-ACE-LINUX64-DEVELOPER.tar.gz /opt/ibm
 
-RUN mv /opt/ibm/ace-${ACE_VERSION} /opt/ibm/ace-11 \
-  && /opt/ibm/ace-11/ace make registry global accept license deferred \
+# Install ACE and accept the license
+RUN mkdir /opt/ibm && echo Downloading package http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/integration/${ACE_VERSION}-ACE-LINUX64-DEVELOPER.tar.gz && \
+    curl -sL http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/integration/${ACE_VERSION}-ACE-LINUX64-DEVELOPER.tar.gz | tar xvz --directory /opt/ibm \
+  && mv /opt/ibm/ace-${ACE_VERSION} /opt/ibm/ace-12 \
+  && /opt/ibm/ace-12/ace make registry global accept license deferred \
   && useradd --uid 1001 --create-home --home-dir /home/aceuser --shell /bin/bash -g 0 -G mqbrkrs aceuser \
   && mkdir -p /home/aceuser/.swt/lib/linux/x86_64/ \
   && ln -s /usr/lib/jni/libswt-* /home/aceuser/.swt/lib/linux/x86_64/
 
 USER aceuser
+
+# Copying mq runtime
+COPY --from=ibmcom/mq:9.2.2.0-r1 --chown=aceuser:0 /opt/mqm /opt/mqm
 
 # Building the ace maven plugin
 COPY --from=0 --chown=aceuser:0 /app/ace-maven-plugin /home/aceuser/ace-maven-plugin
