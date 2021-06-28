@@ -1,7 +1,9 @@
 # ACE S2I builder image
 
 First of all look at the following repos for great examples on creating containerized ACE:
+
 https://github.com/ot4i/ace-demo-pipeline
+
 https://github.com/ot4i/ace-docker
 
 The main purpose for this image is to allow for building ACE projects as part of Openshift pipelines.
