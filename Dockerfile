@@ -17,6 +17,8 @@ LABEL io.k8s.description="Platform for building App Connect Enterprise applicati
 
 # Prevent errors about having no terminal when using apt-get
 ENV DEBIAN_FRONTEND noninteractive
+# To support local dependencies in maven
+ENV MQSI_BASE_FILEPATH=/opt/ibm/ace-12
 
 # mqsicreatebar prereqs; need to run "Xvfb -ac :99 &" and "export DISPLAY=:99"
 # install jdk and maven for build support
@@ -44,7 +46,6 @@ COPY --from=0 --chown=aceuser:0 /app/ace-maven-plugin /home/aceuser/ace-maven-pl
 COPY --chown=aceuser:0 ./settings.xml /home/aceuser/.m2/
 
 RUN mkdir /home/aceuser/workspace \
-  && export MQSI_BASE_FILEPATH=/opt/ibm/ace-12 \
   && mvn -f /home/aceuser/ace-maven-plugin/ace-maven-plugin/pom.xml versions:set -DremoveSnapshot -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -B \
   && mvn -f /home/aceuser/ace-maven-plugin/ace-maven-plugin/pom.xml -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -B package \
   && mvn install:install-file -Dfile=/home/aceuser/ace-maven-plugin/ace-maven-plugin/target/ace-maven-plugin-11.39.jar -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -DpomFile=/home/aceuser/ace-maven-plugin/ace-maven-plugin/pom.xml -DcreateChecksum=true -B
