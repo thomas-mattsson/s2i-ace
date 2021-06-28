@@ -11,7 +11,7 @@ spec:
         - name: API_PATH_PREFIX
           value: /api/v3
         - name: GITHUB_TOKEN_SECRET_NAME
-          value: nordic-build-team-user-at-github
+          value: github-secret
         - name: GITHUB_TOKEN_SECRET_KEY
           value: password
         - name: TARGET_URL
@@ -63,7 +63,7 @@ spec:
         - name: API_PATH_PREFIX
           value: /api/v3
         - name: GITHUB_TOKEN_SECRET_NAME
-          value: nordic-build-team-user-at-github
+          value: github-secret
         - name: GITHUB_TOKEN_SECRET_KEY
           value: password
         - name: TARGET_URL
