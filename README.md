@@ -13,7 +13,7 @@ For Openshift pipelines however, `--runtime-image` can not be used since s2i is 
 
 ## Maven
 
-Maven is used for managing the build of the ACE project. The [ace-maven-plugin](https://github.com/ot4i/ace-maven-plugin) is also included into this image.
+Maven is used for managing the build of the ACE project. The [ace-maven-plugin](https://github.com/ot4i/ace-maven-plugin) is also included into this image. Image is currently using the version at https://github.com/thomas-mattsson/ace-maven-plugin that introduces support for ACE 12 test projects allowing JUnit tests to be executed as part of the build process.
 
 More information on how that can be used in a CI/CD context can be read about here:
 <https://community.ibm.com/community/user/integration/viewdocument/ibm-ace-v11-continuous-integration>
