@@ -2,8 +2,8 @@
 FROM alpine/git
 WORKDIR /app
 # Make sure git clone is not being cached if there's been changes (https://stackoverflow.com/questions/36996046/how-to-prevent-dockerfile-caching-git-clone)
-ADD https://api.github.com/repos/thomas-mattsson/ace-maven-plugin/git/refs/heads/ace12 version.json
-RUN git clone -b ace12 https://github.com/thomas-mattsson/ace-maven-plugin.git
+ADD https://api.github.com/repos/thomas-mattsson/ace-maven-plugin/git/refs/heads/main version.json
+RUN git clone -b main https://github.com/thomas-mattsson/ace-maven-plugin.git
 
 FROM ubuntu:16.04
 
