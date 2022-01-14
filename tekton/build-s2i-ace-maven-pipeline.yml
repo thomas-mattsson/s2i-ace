@@ -2,7 +2,6 @@ apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: build-s2i-ace-maven
-  namespace: my-namespace
 spec:
   resources:
     - name: source
