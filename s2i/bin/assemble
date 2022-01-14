@@ -24,10 +24,6 @@ fi
 echo "---> Installing application source..."
 cp -Rf /tmp/src/. ./
 
-echo "---> Starting Xvfb to support mqsicreatebar"
-Xvfb -ac :99 -nolisten unix &
-export DISPLAY=:99
-
 echo "---> Building application from source..."
 # -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn to disable transfer logging info. When at Maven 3.6.1 use --no-transfer-progress instead
 echo "Running mvn install in root directory"
