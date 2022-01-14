@@ -2,7 +2,6 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: s2i-ace-maven
-  namespace: my-namespace
 spec:
   description: >-
     s2i-ace-maven task clones a Git repository and builds and pushes a container
