@@ -13,7 +13,7 @@ LABEL io.k8s.description="Platform for building App Connect Enterprise applicati
 ENV MQSI_BASE_FILEPATH=/opt/ibm/ace-12
 
 # Copying mq runtime
-COPY --from=docker.io/ibmcom/mq:9.2.4.0-r1 --chown=aceuser:0 /opt/mqm /opt/mqm
+#COPY --from=docker.io/ibmcom/mq:9.2.4.0-r1 --chown=aceuser:0 /opt/mqm /opt/mqm
 
 COPY ./s2i/bin/ /usr/local/s2i
 
