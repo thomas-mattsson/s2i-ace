@@ -39,6 +39,11 @@ spec:
       type: string
     - default: NA
       name: commit_user
+    - default: >-
+        image-registry.openshift-image-registry.svc:5000/cp4i/s2i-ace-maven:12.0.2.0
+      description: >-
+        The s2i-ace-maven image build from the https://github.com/thomas-mattsson/s2i-ace-maven repo.
+      name: BUILD_IMAGE
       type: string
   resources:
     inputs:
@@ -59,7 +64,7 @@ spec:
         - LICENSE=$(params.LICENSE)
         - $(params.PATH_CONTEXT)
         - >-
-          image-registry.openshift-image-registry.svc:5000/mvp/s2i-ace-maven:11.0.0.12
+          $(params.BUILD_IMAGE)
         - '--image-scripts-url'
         - 'image:///usr/local/s2i'
         - '--as-dockerfile'
@@ -144,6 +149,5 @@ spec:
   volumes:
     - emptyDir: {}
       name: gen-source
-    - name: varlibcontainers
-      persistentVolumeClaim:
-        claimName: s2i-ace-maven-varlibcontainers-pvc
+    - emptyDir: {}
+      name: varlibcontainers
