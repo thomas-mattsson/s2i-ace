@@ -26,4 +26,4 @@ cp -Rf /tmp/src/. ./
 
 echo "---> Building application from source..."
 echo "Running gradle in root directory"
-gradle --no-daemon -q && mkdir /home/aceuser/initial-config/bars && mv build/*.bar /home/aceuser/initial-config/bars/
+gradle --no-daemon -q -g /home/aceuser && mkdir /home/aceuser/initial-config/bars && mv build/*.bar /home/aceuser/initial-config/bars/
