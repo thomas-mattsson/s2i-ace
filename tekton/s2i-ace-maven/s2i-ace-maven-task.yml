@@ -105,7 +105,7 @@ spec:
     - command:
         - buildah
         - bud
-        - '--storage-driver=overlay'
+        - '--storage-driver=vfs'
         - '--tls-verify=$(params.TLSVERIFY)'
         - '--layers'
         - '--label'
@@ -128,7 +128,7 @@ spec:
     - command:
         - buildah
         - push
-        - '--storage-driver=overlay'
+        - '--storage-driver=vfs'
         - '--tls-verify=$(params.TLSVERIFY)'
         - $(resources.outputs.builtImage.url)
         - 'docker://$(resources.outputs.builtImage.url)'
