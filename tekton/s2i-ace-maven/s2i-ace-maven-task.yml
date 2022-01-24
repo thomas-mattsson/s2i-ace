@@ -23,11 +23,10 @@ spec:
       description: Must be set to "accept" to run
       name: LICENSE
       type: string
-    - default: >-
-        cp.icr.io/cp/appc/ace-server-prod@sha256:8372beb29cd95d0d3de1b6587248e9997e69ef13bc77caffd6ca3f7068d7779a
+    - default: ''
       description: >-
         The runtime image to use. Should be an integration server image from the
-        entitled registry.
+        entitled registry. Default is leaving it empty to use the s2i build image as runtime image.
       name: RUNTIME_IMAGE
       type: string
     - default: NA
@@ -38,9 +37,9 @@ spec:
       type: string
     - default: NA
       name: commit_user
+      type: string
     - default: >-
         image-registry.openshift-image-registry.svc:5000/cp4i/s2i-ace-maven:12.0.2.0
-    - default: ''
       description: >-
         The s2i-ace-maven image build from the https://github.com/thomas-mattsson/s2i-ace-maven repo.
       name: BUILD_IMAGE
