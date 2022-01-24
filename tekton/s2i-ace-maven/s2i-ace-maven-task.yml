@@ -70,20 +70,24 @@ spec:
     - args:
         - '-c'
         - >
-          echo "
+          if [ -z $(params.RUNTIME_IMAGE) ]
+          then
+            echo "Using build image as runtime image."
+          else
+            echo "
 
-          FROM $(params.RUNTIME_IMAGE)
+            FROM $(params.RUNTIME_IMAGE)
 
-          ENV LICENSE=$(params.LICENSE)
+            ENV LICENSE=$(params.LICENSE)
 
-          # To support JVM debug EXPOSE 8888
+            # To support JVM debug EXPOSE 8888
 
-          COPY --from=0 --chown=aceuser:0 /tmp/*.bar
-          /home/aceuser/initial-config/bars/" >> /gen-source/Dockerfile.gen
-
+            COPY --from=0 --chown=aceuser:0 /tmp/*.bar
+            /home/aceuser/initial-config/bars/" >> /gen-source/Dockerfile.gen
+          fi
           echo "Generated Dockerfile:"
 
-          cat /gen-source/Dockerfile.gen
+          cat /gen-source/Dockerfile.gen  
       command:
         - /bin/bash
       image: registry.access.redhat.com/ubi8/ubi
