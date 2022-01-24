@@ -79,9 +79,13 @@ spec:
         - '-c'
         - >
           if [ -z $(params.RUNTIME_IMAGE) ]
+          
           then
+          
             echo "Using build image as runtime image."
+            
           else
+          
             echo "
 
             FROM $(params.RUNTIME_IMAGE)
@@ -92,7 +96,9 @@ spec:
 
             COPY --from=0 --chown=aceuser:0 /tmp/*.bar
             /home/aceuser/initial-config/bars/" >> /gen-source/Dockerfile.gen
+            
           fi
+          
           echo "Generated Dockerfile:"
 
           cat /gen-source/Dockerfile.gen  
