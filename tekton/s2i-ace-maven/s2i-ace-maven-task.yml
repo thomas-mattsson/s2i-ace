@@ -27,8 +27,7 @@ spec:
         cp.icr.io/cp/appc/ace-server-prod@sha256:8372beb29cd95d0d3de1b6587248e9997e69ef13bc77caffd6ca3f7068d7779a
       description: >-
         The runtime image to use. Should be an integration server image from the
-        entitled registry. See alternatives at
-        https://www.ibm.com/docs/en/app-connect/11.0.0?topic=aciccd-obtaining-app-connect-enterprise-server-image-from-cloud-container-registry 
+        entitled registry.
       name: RUNTIME_IMAGE
       type: string
     - default: >-
@@ -61,7 +60,7 @@ spec:
         - 'image:///usr/local/s2i'
         - '--as-dockerfile'
         - /gen-source/Dockerfile.gen
-      image: registry.redhat.io/ocp-tools-43-tech-preview/source-to-image-rhel8
+      image: registry.redhat.io/ocp-tools-4-tech-preview/source-to-image-rhel8@sha256:ba51e5e74ff5a29fd429b0bb77bc2130e5284826a60d042fc4e4374381a7a308
       name: generate
       resources: {}
       volumeMounts:
@@ -107,7 +106,7 @@ spec:
         - $(resources.outputs.builtImage.url)
         - .
       image: >-
-        registry.redhat.io/rhel8/buildah@sha256:180c4d9849b6ab0e5465d30d4f3a77765cf0d852ca1cb1efb59d6e8c9f90d467
+        registry.redhat.io/rhel8/buildah@sha256:6a68ece207bc5fd8db2dd5cc2d0b53136236fb5178eb5b71eebe5d07a3c33d13
       name: build
       resources: {}
       securityContext:
@@ -126,7 +125,7 @@ spec:
         - $(resources.outputs.builtImage.url)
         - 'docker://$(resources.outputs.builtImage.url)'
       image: >-
-        registry.redhat.io/rhel8/buildah@sha256:180c4d9849b6ab0e5465d30d4f3a77765cf0d852ca1cb1efb59d6e8c9f90d467
+        registry.redhat.io/rhel8/buildah@sha256:6a68ece207bc5fd8db2dd5cc2d0b53136236fb5178eb5b71eebe5d07a3c33d13
       name: push
       resources: {}
       securityContext:
