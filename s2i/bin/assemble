@@ -12,18 +12,20 @@ if [[ "$1" == "-h" ]]; then
 	exec /usr/local/s2i/usage
 fi
 
+mkdir -p /home/aceuser/src
+
 # Restore artifacts from the previous build (if they exist).
 #
 if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
   echo "---> Restoring build artifacts..."
   shopt -s dotglob
-  mv /tmp/artifacts/* ./
+  mv /tmp/artifacts/* /home/aceuser/src
   shopt -u dotglob
 fi
 
 echo "---> Installing application source..."
-cp -Rf /tmp/src/. ./
+cp -Rf /tmp/src/. /home/aceuser/src
 
 echo "---> Building application from source..."
 echo "Running gradle in root directory"
-gradle --no-daemon -q -g /home/aceuser && mkdir /home/aceuser/initial-config/bars && mv build/*.bar /home/aceuser/initial-config/bars/
+gradle --no-daemon -q -g /home/aceuser -p /home/aceuser/src && mkdir -p /home/aceuser/initial-config/bars && mv /home/aceuser/src/build/*.bar /home/aceuser/initial-config/bars/
