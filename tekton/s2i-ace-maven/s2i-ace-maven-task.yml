@@ -64,7 +64,7 @@ spec:
         requests:
           ephemeral-storage: 0.1G
         limits:
-          ephemeral-storage: 2G
+          ephemeral-storage: 0.1G
       volumeMounts:
         - mountPath: /gen-source
           name: gen-source
@@ -104,7 +104,7 @@ spec:
         requests:
           ephemeral-storage: 0.1G
         limits:
-          ephemeral-storage: 2G
+          ephemeral-storage: 0.1G
       volumeMounts:
         - mountPath: /gen-source
           name: gen-source
@@ -128,7 +128,7 @@ spec:
         requests:
           ephemeral-storage: 0.1G
         limits:
-          ephemeral-storage: 2G
+          ephemeral-storage: 6G
       volumeMounts:
         - mountPath: /var/lib/containers
           name: varlibcontainers
@@ -149,7 +149,7 @@ spec:
         requests:
           ephemeral-storage: 0.1G
         limits:
-          ephemeral-storage: 2G
+          ephemeral-storage: 4G
       volumeMounts:
         - mountPath: /var/lib/containers
           name: varlibcontainers
