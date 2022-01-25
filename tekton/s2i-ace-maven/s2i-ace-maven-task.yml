@@ -72,9 +72,9 @@ spec:
       name: generate
       resources:
         requests:
-          emphemeral-storage: 0.1G
+          ephemeral-storage: 0.1G
         limits:
-          emphemeral-storage: 2G
+          ephemeral-storage: 2G
       volumeMounts:
         - mountPath: /gen-source
           name: gen-source
@@ -112,9 +112,9 @@ spec:
       name: stage-dockerfile
       resources:
         requests:
-          emphemeral-storage: 0.1G
+          ephemeral-storage: 0.1G
         limits:
-          emphemeral-storage: 2G
+          ephemeral-storage: 2G
       volumeMounts:
         - mountPath: /gen-source
           name: gen-source
@@ -140,9 +140,9 @@ spec:
       name: build
       resources:
         requests:
-          emphemeral-storage: 0.1G
+          ephemeral-storage: 0.1G
         limits:
-          emphemeral-storage: 2G
+          ephemeral-storage: 2G
       volumeMounts:
         - mountPath: /var/lib/containers
           name: varlibcontainers
@@ -161,9 +161,9 @@ spec:
       name: push
       resources:
         requests:
-          emphemeral-storage: 0.1G
+          ephemeral-storage: 0.1G
         limits:
-          emphemeral-storage: 2G
+          ephemeral-storage: 2G
       volumeMounts:
         - mountPath: /var/lib/containers
           name: varlibcontainers
