@@ -163,7 +163,7 @@ spec:
         requests:
           ephemeral-storage: 0.1G
         limits:
-          ephemeral-storage: 4G
+          ephemeral-storage: 6G
       volumeMounts:
         - mountPath: /var/lib/containers
           name: varlibcontainers
