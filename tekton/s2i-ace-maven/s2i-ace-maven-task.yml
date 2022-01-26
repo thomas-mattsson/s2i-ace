@@ -123,7 +123,6 @@ spec:
         - bud
         - '--storage-driver=vfs'
         - '--tls-verify=$(params.TLSVERIFY)'
-        - '--layers'
         - '--label'
         - git_commit=$(resources.inputs.source.revision)
          - '--label'
@@ -142,7 +141,7 @@ spec:
         requests:
           ephemeral-storage: 0.1G
         limits:
-          ephemeral-storage: 30G
+          ephemeral-storage: 2G
       volumeMounts:
         - mountPath: /var/lib/containers
           name: varlibcontainers
@@ -163,7 +162,7 @@ spec:
         requests:
           ephemeral-storage: 0.1G
         limits:
-          ephemeral-storage: 6G
+          ephemeral-storage: 2G
       volumeMounts:
         - mountPath: /var/lib/containers
           name: varlibcontainers
