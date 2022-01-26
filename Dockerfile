@@ -1,6 +1,9 @@
 ARG BASE_IMAGE=cp.icr.io/cp/appc/ace-server-prod@sha256:f31b9adcfd4a77ba8c62b92c6f34985ef1f2d53e8082f628f170013eaf4c9003
 FROM $BASE_IMAGE
 
+# Large number of layers in the ace-server-prod image, squash it to avoid bad performance when using vfs storage driver in builds
+COPY --from=0 / /
+
 ARG ACE_VERSION=12.0.2.0
 ARG GRADLE_VERSION=7.3.3
 
