@@ -1,10 +1,10 @@
 ARG ACE_BASE_IMAGE=cp.icr.io/cp/appc/ace-server-prod@sha256:f31b9adcfd4a77ba8c62b92c6f34985ef1f2d53e8082f628f170013eaf4c9003
 ARG BASE_IMAGE=registry.access.redhat.com/ubi8/ubi-minimal@sha256:16da4d4c5cb289433305050a06834b7328769f8a5257ad5b4a5006465a0379ff
-FROM $ACE_BASE_IMAGE
+FROM $ACE_BASE_IMAGE as ace
 
 # Large number of layers in the ace-server-prod image, squash it to avoid bad performance when using vfs storage driver in builds
 FROM $BASE_IMAGE
-COPY --from=0 / /
+COPY --from=ace / /
 # Need to recreate env vars due to squash wa above
 ENV BASH_ENV=/usr/local/bin/ace_env.sh
 ENV LOG_FORMAT=basic
