@@ -1,5 +1,6 @@
-ARG ACE_BASE_IMAGE=cp.icr.io/cp/appc/ace-server-prod@sha256:f31b9adcfd4a77ba8c62b92c6f34985ef1f2d53e8082f628f170013eaf4c9003
-ARG BASE_IMAGE=registry.access.redhat.com/ubi8/ubi-minimal@sha256:16da4d4c5cb289433305050a06834b7328769f8a5257ad5b4a5006465a0379ff
+# ACE 12.0.3.0-r1
+ARG ACE_BASE_IMAGE=cp.icr.io/cp/appc/ace-server-prod@sha256:f9b2b5e385f462d60a3fedf2aa7366b3bc304e971c89fafe6425cf2949a472c6
+ARG BASE_IMAGE=registry.access.redhat.com/ubi8/ubi-minimal@sha256:be112e49c8addf19842a58ee30203f64d33affca6eb4fb74d6beac19d2f45259
 FROM $ACE_BASE_IMAGE as ace
 
 # Large number of layers in the ace-server-prod image, squash it to avoid bad performance when using vfs storage driver in builds
@@ -17,13 +18,13 @@ ENV MQCERTLABL=aceclient
 ENV PRODNAME=AppConnectEnterprise
 ENV COMPNAME=IntegrationServer
 
-ARG ACE_VERSION=12.0.2.0
+ARG ACE_VERSION=12.0.3.0
 ARG GRADLE_VERSION=7.3.3
 
 LABEL maintainer="Thomas Mattsson <thomas.mattsson@se.ibm.com>"
-LABEL io.k8s.description="Platform for building App Connect Enterprise applications into integration server using Maven" \
-     io.k8s.display-name="App Connect Enterprise 12.0.2.0" \
-     io.openshift.tags="builder,ace,12.0,12.0.2.0" \
+LABEL io.k8s.description="Platform for building App Connect Enterprise applications into integration server using Gradle" \
+     io.k8s.display-name="App Connect Enterprise 12.0.3.0" \
+     io.openshift.tags="builder,ace,12.0,12.0.3.0" \
      io.openshift.s2i.scripts-url=image:///usr/local/s2i
 
 USER root
