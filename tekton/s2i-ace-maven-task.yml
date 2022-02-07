@@ -32,6 +32,15 @@ spec:
         https://www.ibm.com/docs/en/app-connect/11.0.0?topic=aciccd-obtaining-app-connect-enterprise-server-image-from-cloud-container-registry 
       name: RUNTIME_IMAGE
       type: string
+    - default: NA
+      name: commit_id
+      type: string
+    - default: NA
+      name: commit_message
+      type: string
+    - default: NA
+      name: commit_user
+      type: string
   resources:
     inputs:
       - description: >-
@@ -96,6 +105,10 @@ spec:
         - '--layers'
         - '--label'
         - git_commit=$(resources.inputs.source.revision)
+         - '--label'
+        - git_message=$(params.commit_message)
+         - '--label'
+        - git_user=$(params.commit_user)
         - '-f'
         - /gen-source/Dockerfile.gen
         - '-t'
