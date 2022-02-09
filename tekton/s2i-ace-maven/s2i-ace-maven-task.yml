@@ -115,7 +115,7 @@ spec:
         - '--storage-driver=vfs'
         - '--tls-verify=$(params.TLSVERIFY)'
         - '--label'
-        - git_commit=$(resources.inputs.source.revision)
+        - git_commit=$(params.commit_id)
         - '--label'
         - git_message=$(params.commit_message)
         - '--label'
