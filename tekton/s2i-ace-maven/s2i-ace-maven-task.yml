@@ -69,7 +69,13 @@ spec:
         - /gen-source/Dockerfile.gen
       image: registry.redhat.io/ocp-tools-4-tech-preview/source-to-image-rhel8@sha256:ba51e5e74ff5a29fd429b0bb77bc2130e5284826a60d042fc4e4374381a7a308
       name: generate
-      resources: {}
+      resources:
+        requests:
+          memory: "100Mi"
+          cpu: "500m"
+        limits:
+          memory: "1Gi"
+          cpu: "1"
       volumeMounts:
         - mountPath: /gen-source
           name: gen-source
