@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: argocd-override-integration-server-image
+spec:
+  params:
+    - name: image
+    - name: application
+    - name: flags
+      default: --
+    - name: argocd-version
+      default: v2.2.5
+  stepTemplate:
+    envFrom:
+      - secretRef:
+          name: argocd-env-secret  # used for server and authentication (username/password or auth token)
+  steps:
+    - name: argocd-app-sync
+      image: argoproj/argocd:$(params.argocd-version)
+      script: |
+        argocd login $ARGOCD_SERVER --grpc-web-root-path /argo-cd --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD
+        argocd app set $(params.application) -p ingress.enabled=$(params.image)
+        argocd app sync $(params.application) $(params.flags) --grpc-web-root-path /argo-cd --server $ARGOCD_SERVER
+        argocd app wait $(params.application) --health $(params.flags) --grpc-web-root-path /argo-cd --server $ARGOCD_SERVER
+
