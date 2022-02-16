@@ -18,10 +18,6 @@ spec:
     type: Docker
     dockerStrategy:
       imageOptimizationPolicy: SkipLayers
-    sourceStrategy:
-      from:
-        kind: "DockerImage"
-        name: "cp.icr.io/cp"
       pullSecret:
         name: "ibm-entitlement-key"
   source:
