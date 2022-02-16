@@ -18,12 +18,17 @@ spec:
     type: Docker
     dockerStrategy:
       imageOptimizationPolicy: SkipLayers
+    sourceStrategy:
+      from:
+        kind: "DockerImage"
+        name: "cp.icr.io/cp"
+      pullSecret:
+        name: "ibm-entitlement-key"
   source:
     type: Git
     git:
       uri: 'https://github.com/thomas-mattsson/s2i-ace-maven.git'
-      ref: adopt-ibmint
-    pullSecret: ibm-entitlement-key       
+      ref: adopt-ibmint    
   triggers:
     - type: ConfigChange
   runPolicy: Serial
