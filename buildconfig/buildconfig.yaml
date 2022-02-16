@@ -1,0 +1,22 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: s2i-ace-gradle-build
+  namespace: cp4i
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 's2i-ace-maven:12.0.3.0'
+  strategy:
+    type: Docker
+    dockerStrategy:
+      imageOptimizationPolicy: SkipLayers
+  source:
+    type: Git
+    git:
+      uri: 'https://github.com/thomas-mattsson/s2i-ace-maven.git'
+      ref: adopt-ibmint
+  triggers:
+    - type: ConfigChange
+  runPolicy: Serial
