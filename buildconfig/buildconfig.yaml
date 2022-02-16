@@ -23,6 +23,7 @@ spec:
     git:
       uri: 'https://github.com/thomas-mattsson/s2i-ace-maven.git'
       ref: adopt-ibmint
+  pullSecret: ibm-entitlement-key 
   triggers:
     - type: ConfigChange
   runPolicy: Serial
