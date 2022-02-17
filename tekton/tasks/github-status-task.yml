@@ -84,11 +84,11 @@ spec:
 
         state = "$(params.STATE)"
 
-        print("https:\/\/[^\/]*\/(.*)")
+        print("https:\/\/[^\/]*\/([^.]*)(?:\.git)?")
 
         print("$(resources.inputs.source.url)")
 
-        x = re.search(r"https:\/\/[^\/]*\/(.*)",
+        x = re.search(r"https:\/\/[^\/]*\/([^.]*)(?:\.git)?",
         "$(resources.inputs.source.url)")
 
         print(x)
