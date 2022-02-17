@@ -19,7 +19,6 @@ spec:
       image: argoproj/argocd:$(params.argocd-version)
       script: |
         argocd login $ARGOCD_SERVER --grpc-web-root-path /argo-cd --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD
-        argocd app set $(params.application) -p ingress.enabled=$(params.image)
+        argocd app set $(params.application) -p spec.pod.containers.runtime.image=$(params.image)
         argocd app sync $(params.application) $(params.flags) --grpc-web-root-path /argo-cd --server $ARGOCD_SERVER
         argocd app wait $(params.application) --health $(params.flags) --grpc-web-root-path /argo-cd --server $ARGOCD_SERVER
-
