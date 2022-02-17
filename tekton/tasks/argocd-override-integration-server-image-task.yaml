@@ -21,7 +21,7 @@ spec:
     - name: argocd-app-sync
       image: argoproj/argocd:$(params.argocd-version)
       script: |
-        argocd login $ARGOCD_SERVER --grpc-web-root-path /argo-cd --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD
+        argocd login $ARGOCD_SERVER --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD
         argocd app set $(params.application) -p image.tag=$(resources.inputs.source.revision)
-        argocd app sync $(params.application) $(params.flags) --grpc-web-root-path /argo-cd --server $ARGOCD_SERVER
-        argocd app wait $(params.application) --health $(params.flags) --grpc-web-root-path /argo-cd --server $ARGOCD_SERVER
+        argocd app sync $(params.application) $(params.flags) --server $ARGOCD_SERVER
+        argocd app wait $(params.application) --health $(params.flags) --server $ARGOCD_SERVER
