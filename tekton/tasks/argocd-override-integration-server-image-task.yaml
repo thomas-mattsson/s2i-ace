@@ -4,7 +4,6 @@ metadata:
   name: argocd-override-integration-server-image
 spec:
   params:
-    - name: application
     - name: flags
       default: --
     - name: argocd-version
@@ -21,7 +20,9 @@ spec:
     - name: argocd-app-sync
       image: argoproj/argocd:$(params.argocd-version)
       script: |
+        repo=$(echo "$(resources.inputs.source.url)" | sed -n "s/https:\/\/[^\/]*\/\([^/.]*\)\/\([^/.]*\)\(.git\)\?/\2/p")
+        echo "Repo is $(repo) which will be used as application name"
         argocd login $ARGOCD_SERVER --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD
-        argocd app set $(params.application) -p image.tag=$(resources.inputs.source.revision)
-        argocd app sync $(params.application) $(params.flags)
-        argocd app wait $(params.application) --health $(params.flags)
+        argocd app set $(repo) -p image.tag=$(resources.inputs.source.revision)
+        argocd app sync $(repo) $(params.flags)
+        argocd app wait $(repo) --health $(params.flags)
