@@ -144,8 +144,8 @@ spec:
         - '--storage-driver=vfs'
         - '--tls-verify=$(params.TLSVERIFY)'
         - '--digestfile=/gen-source/image-digest'
-        - $(params.IMAGE)
-        - 'docker://$(params.IMAGE)'
+        - $(resources.outputs.builtImage.url)
+        - 'docker://$(resources.outputs.builtImage.url)'
       image: $(params.BUILDER_IMAGE)
       name: push
       resources: {}
