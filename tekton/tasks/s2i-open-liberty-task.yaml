@@ -34,6 +34,9 @@ spec:
       description: When true, applicaton binaries will be copied to apps instead of dropins
       name: DEPLOY_TO_APPS
       type: string
+    - description: Location of the repo where image has to be pushed
+      name: IMAGE
+      type: string
     - default: >-
         registry.redhat.io/rhel8/buildah@sha256:99cae35f40c7ec050fed3765b2b27e0b8bbea2aa2da7c16408e2ca13c60ff8ee
       description: The location of the buildah builder image.
@@ -124,7 +127,7 @@ spec:
         - '-f'
         - /gen-source/Dockerfile.gen
         - '-t'
-        - $(resources.outputs.builtImage.url)
+        - $(params.IMAGE)
         - .
       image: $(params.BUILDER_IMAGE)
       name: build
@@ -134,27 +137,27 @@ spec:
           name: varlibcontainers
         - mountPath: /gen-source
           name: gen-source
-      workingDir: /gen-source
+      workingDir: $(workspaces.source.path)
     - command:
         - buildah
         - push
         - '--storage-driver=vfs'
         - '--tls-verify=$(params.TLSVERIFY)'
-        - '--digestfile=/gen-source/image-digest'
-        - $(resources.outputs.builtImage.url)
-        - 'docker://$(resources.outputs.builtImage.url)'
+        - '--digestfile=$(workspaces.source.path)/image-digest'
+        - $(params.IMAGE)
+        - 'docker://$(params.IMAGE)'
       image: $(params.BUILDER_IMAGE)
       name: push
       resources: {}
       volumeMounts:
         - mountPath: /var/lib/containers
           name: varlibcontainers
-      workingDir: /gen-source
+      workingDir: $(workspaces.source.path)
     - image: $(params.BUILDER_IMAGE)
       name: digest-to-results
       resources: {}
       script: >-
-        cat /gen-source/image-digest | tee
+        cat $(workspaces.source.path)/image-digest | tee
         /tekton/results/IMAGE_DIGEST
   volumes:
     - emptyDir: {}
@@ -163,3 +166,6 @@ spec:
       name: gen-source
     - emptyDir: {}
       name: envparams
+  workspaces:
+    - mountPath: /workspace/source
+      name: source
