@@ -51,16 +51,6 @@ spec:
     - default: NA
       name: commit_user
       type: string
-  resources:
-    inputs:
-      - description: >-
-          The git repo with the source of the application.
-        name: source
-        type: git
-    outputs:
-      - name: builtImage
-        targetPath: /workspace/builtImage
-        type: image
   results:
     - description: Digest of the image just built.
       name: IMAGE_DIGEST
