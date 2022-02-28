@@ -127,7 +127,7 @@ spec:
           name: varlibcontainers
         - mountPath: /gen-source
           name: gen-source
-      workingDir: $(workspaces.source.path)
+      workingDir: /gen-source
     - command:
         - buildah
         - push
