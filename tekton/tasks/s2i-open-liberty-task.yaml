@@ -58,6 +58,7 @@ spec:
     - args:
         - |-
           echo "MAVEN_ARGS=verify -Popenshift" > env-file
+          echo "SONAR_USER_HOME=$HOME/.sonar" >> env-file
 
           [[ '$(params.DEPLOY_TO_APPS)' != "" ]] &&
             echo "DEPLOY_TO_APPS=$(params.DEPLOY_TO_APPS)" >> env-file
