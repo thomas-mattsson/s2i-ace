@@ -57,7 +57,7 @@ spec:
   steps:
     - args:
         - |-
-          echo "MAVEN_ARGS=\"verify -Popenshift\"" > env-file
+          echo "MAVEN_ARGS=verify -Popenshift" > env-file
 
           [[ '$(params.DEPLOY_TO_APPS)' != "" ]] &&
             echo "DEPLOY_TO_APPS=$(params.DEPLOY_TO_APPS)" >> env-file
