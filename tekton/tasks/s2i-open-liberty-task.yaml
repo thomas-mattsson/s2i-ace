@@ -58,7 +58,10 @@ spec:
     - args:
         - |-
           echo "MAVEN_ARGS=verify -Popenshift" > env-file
+          # Support sonarqube
           echo "SONAR_USER_HOME=$HOME/.sonar" >> env-file
+          mkdir -p $HOME/.sonar/cache
+          chmod -R 400 $HOME/.sonar
 
           [[ '$(params.DEPLOY_TO_APPS)' != "" ]] &&
             echo "DEPLOY_TO_APPS=$(params.DEPLOY_TO_APPS)" >> env-file
