@@ -59,9 +59,7 @@ spec:
         - |-
           echo "MAVEN_ARGS=verify -Popenshift" > env-file
           # Support sonarqube
-          echo "SONAR_USER_HOME=$HOME/.sonar" >> env-file
-          mkdir -p $HOME/.sonar/cache
-          chmod -R 400 $HOME/.sonar
+          echo "SONAR_USER_HOME=/sonarqube" >> env-file
 
           [[ '$(params.DEPLOY_TO_APPS)' != "" ]] &&
             echo "DEPLOY_TO_APPS=$(params.DEPLOY_TO_APPS)" >> env-file
@@ -134,6 +132,8 @@ spec:
           name: varlibcontainers
         - mountPath: /gen-source
           name: gen-source
+        - mountPath: /sonarqube
+          name: sonarqube
       workingDir: /gen-source
     - command:
         - buildah
@@ -163,6 +163,8 @@ spec:
       name: gen-source
     - emptyDir: {}
       name: envparams
+    - emptyDir: {}
+      name: sonarqube
   workspaces:
     - mountPath: /workspace/source
       name: source
