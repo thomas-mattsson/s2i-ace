@@ -96,7 +96,7 @@ spec:
         - mountPath: /env-params
           name: envparams
       script: |-
-        if [ -n "$(params.INCREMENTAL_BUILD_TAG)" ] && buildah manifest inspect $(params.INCREMENTAL_BUILD_TAG); then
+        if [ -n "$(params.INCREMENTAL_BUILD_TAG)" ] && buildah inspect --type image $(params.INCREMENTAL_BUILD_TAG); then
           echo "Incremental image $(params.INCREMENTAL_BUILD_TAG) exists"
           touch /env-params/incremental-tag-exists
         fi
