@@ -89,14 +89,14 @@ spec:
         - mountPath: /env-params
           name: envparams
       workingDir: /env-params
-    - image: $(params.BUILDER_IMAGE)
+    - image: registry.redhat.io/rhel8/skopeo@sha256:7297e3b42ef1d56a5bc1d64a979d05c157bf31b476cc526386c873a89459610a
       name: check-exists-incremental
       resources: {}
       volumeMounts:
         - mountPath: /env-params
           name: envparams
       script: |-
-        if [ -n "$(params.INCREMENTAL_BUILD_TAG)" ] && buildah inspect --type image $(params.INCREMENTAL_BUILD_TAG); then
+        if [ -n "$(params.INCREMENTAL_BUILD_TAG)" ] && skopeo inspect $(params.INCREMENTAL_BUILD_TAG); then
           echo "Incremental image $(params.INCREMENTAL_BUILD_TAG) exists"
           touch /env-params/incremental-tag-exists
         fi
