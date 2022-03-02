@@ -96,7 +96,7 @@ spec:
         - mountPath: /env-params
           name: envparams
       script: |-
-        if [ -n "$(params.INCREMENTAL_BUILD_TAG)" ] && skopeo inspect docker://$(params.INCREMENTAL_BUILD_TAG); then
+        if [ -n "$(params.INCREMENTAL_BUILD_TAG)" ] && skopeo inspect docker://$(params.INCREMENTAL_BUILD_TAG) > /dev/null 2> /dev/null; then
           echo "Incremental image $(params.INCREMENTAL_BUILD_TAG) exists"
           touch /env-params/incremental-tag-exists
         fi
