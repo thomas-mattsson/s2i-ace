@@ -101,13 +101,13 @@ spec:
           touch /env-params/incremental-tag-exists
         fi
     - script: |-
-        if [ -z "$(params.INCREMENTAL_BUILD_TAG)" ] && [ -f "/env-params/incremental-tag-exists" ]; then
-          s2i build $(params.PATH_CONTEXT) openliberty/open-liberty-s2i:$(params.VERSION) --image-scripts-url image:///usr/local/s2i \
-            --as-dockerfile /gen-source/Dockerfile.gen --environment-file /env-params/env-file
-        else
+        if [ -f "/env-params/incremental-tag-exists" ]; then
           s2i build $(params.PATH_CONTEXT) openliberty/open-liberty-s2i:$(params.VERSION) --image-scripts-url image:///usr/local/s2i \
             --as-dockerfile /gen-source/Dockerfile.gen --environment-file /env-params/env-file \
             --incremental $(params.INCREMENTAL_BUILD_TAG)
+        else
+          s2i build $(params.PATH_CONTEXT) openliberty/open-liberty-s2i:$(params.VERSION) --image-scripts-url image:///usr/local/s2i \
+            --as-dockerfile /gen-source/Dockerfile.gen --environment-file /env-params/env-file
         fi
       image: >-
         registry.redhat.io/ocp-tools-4-tech-preview/source-to-image-rhel8@sha256:637c15600359cb45bc01445b5e811b6240ca239f0ebfe406b50146e34f68f631
