@@ -109,7 +109,7 @@ spec:
         - mountPath: /env-params
           name: envparams
       workingDir: $(workspaces.source.path)
-      script: |
+    - script: |
         if [ -z $(params.INCREMENTAL_BUILD_TAG) ]
         then
           buildah bud --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) --layers \
