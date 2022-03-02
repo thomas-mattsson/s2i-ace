@@ -90,8 +90,7 @@ spec:
           name: envparams
       workingDir: /env-params
     - script: |
-        if [ -z $(params.INCREMENTAL_BUILD_TAG) ]
-        then
+        if [ -z "$(params.INCREMENTAL_BUILD_TAG)" ]; then
           s2i build $(params.PATH_CONTEXT) openliberty/open-liberty-s2i:$(params.VERSION) --image-scripts-url image:///usr/local/s2i \
             --as-dockerfile /gen-source/Dockerfile.gen --environment-file /env-params/env-file
         else
@@ -110,8 +109,7 @@ spec:
           name: envparams
       workingDir: $(workspaces.source.path)
     - script: |
-        if [ -z $(params.INCREMENTAL_BUILD_TAG) ]
-        then
+        if [ -z "$(params.INCREMENTAL_BUILD_TAG)" ]; then
           buildah bud --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) --layers \
             --label git_commit=$(params.commit_id) \
             --label git_message=$(params.commit_message) \
@@ -149,8 +147,7 @@ spec:
           name: varlibcontainers
       workingDir: $(workspaces.source.path)
     - script: |
-        if [ -n $(params.INCREMENTAL_BUILD_TAG) ]
-        then
+        if [ -n "$(params.INCREMENTAL_BUILD_TAG)" ]; then
           buildah push --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) $(params.INCREMENTAL_BUILD_TAG) docker://$(params.INCREMENTAL_BUILD_TAG)
         fi
       image: $(params.BUILDER_IMAGE)
