@@ -89,8 +89,18 @@ spec:
         - mountPath: /env-params
           name: envparams
       workingDir: /env-params
-    - script: |
-        if [ -z "$(params.INCREMENTAL_BUILD_TAG)" ]; then
+    - image: $(params.BUILDER_IMAGE)
+      name: check-exists-incremental
+      resources: {}
+      volumeMounts:
+        - mountPath: /env-params
+          name: envparams
+      script: |-
+        if [ -n "$(params.INCREMENTAL_BUILD_TAG)" ] && buildah manifest inspect $(params.INCREMENTAL_BUILD_TAG); then
+          touch /env-params/incremental-tag-exists
+        fi
+    - script: |-
+        if [ -z "$(params.INCREMENTAL_BUILD_TAG)" ] && [ -f "/env-params/incremental-tag-exists" ]; then
           s2i build $(params.PATH_CONTEXT) openliberty/open-liberty-s2i:$(params.VERSION) --image-scripts-url image:///usr/local/s2i \
             --as-dockerfile /gen-source/Dockerfile.gen --environment-file /env-params/env-file
         else
@@ -108,7 +118,7 @@ spec:
         - mountPath: /env-params
           name: envparams
       workingDir: $(workspaces.source.path)
-    - script: |
+    - script: |-
         if [ -z "$(params.INCREMENTAL_BUILD_TAG)" ]; then
           buildah bud --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) --layers \
             --label git_commit=$(params.commit_id) \
@@ -146,7 +156,7 @@ spec:
         - mountPath: /var/lib/containers
           name: varlibcontainers
       workingDir: $(workspaces.source.path)
-    - script: |
+    - script: |-
         if [ -n "$(params.INCREMENTAL_BUILD_TAG)" ]; then
           buildah push --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) $(params.INCREMENTAL_BUILD_TAG) docker://$(params.INCREMENTAL_BUILD_TAG)
         fi
