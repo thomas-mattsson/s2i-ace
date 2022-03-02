@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: github-set-status
+  name: github-set-status-pr
 spec:
   description: >-
     This task will set the status of the CI job to the specified value along
