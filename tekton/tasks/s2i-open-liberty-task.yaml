@@ -42,6 +42,10 @@ spec:
       description: The location of the buildah builder image.
       name: BUILDER_IMAGE
       type: string
+    - default: ''
+      description: When provided, s2i will use incremental builds using this tag, which will enable caching the maven artifacts between builds
+      name: INCREMENTAL_BUILD_TAG
+      type: string
     - default: NA
       name: commit_id
       type: string
@@ -85,18 +89,16 @@ spec:
         - mountPath: /env-params
           name: envparams
       workingDir: /env-params
-    - command:
-        - s2i
-        - build
-        - $(params.PATH_CONTEXT)
-        - >-
-          openliberty/open-liberty-s2i:$(params.VERSION)
-        - '--image-scripts-url'
-        - 'image:///usr/local/s2i'
-        - '--as-dockerfile'
-        - /gen-source/Dockerfile.gen
-        - '--environment-file'
-        - /env-params/env-file
+    - script: |
+        if [ -z $(params.INCREMENTAL_BUILD_TAG) ]
+        then
+          s2i build $(params.PATH_CONTEXT) openliberty/open-liberty-s2i:$(params.VERSION) --image-scripts-url image:///usr/local/s2i \
+            --as-dockerfile /gen-source/Dockerfile.gen --environment-file /env-params/env-file
+        else
+          s2i build $(params.PATH_CONTEXT) openliberty/open-liberty-s2i:$(params.VERSION) --image-scripts-url image:///usr/local/s2i \
+            --as-dockerfile /gen-source/Dockerfile.gen --environment-file /env-params/env-file \
+            --incremental $(params.INCREMENTAL_BUILD_TAG)
+        fi
       image: >-
         registry.redhat.io/ocp-tools-4-tech-preview/source-to-image-rhel8@sha256:637c15600359cb45bc01445b5e811b6240ca239f0ebfe406b50146e34f68f631
       name: generate
@@ -107,23 +109,21 @@ spec:
         - mountPath: /env-params
           name: envparams
       workingDir: $(workspaces.source.path)
-    - command:
-        - buildah
-        - bud
-        - '--storage-driver=vfs'
-        - '--tls-verify=$(params.TLSVERIFY)'
-        - '--layers'
-        - '--label'
-        - git_commit=$(params.commit_id)
-        - '--label'
-        - git_message=$(params.commit_message)
-        - '--label'
-        - git_user=$(params.commit_user)
-        - '-f'
-        - /gen-source/Dockerfile.gen
-        - '-t'
-        - $(params.IMAGE)
-        - .
+      script: |
+        if [ -z $(params.INCREMENTAL_BUILD_TAG) ]
+        then
+          buildah bud --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) --layers \
+            --label git_commit=$(params.commit_id) \
+            --label git_message=$(params.commit_message) \
+            --label git_user=$(params.commit_user) \
+            -f /gen-source/Dockerfile.gen -t $(params.IMAGE) .
+        else
+          buildah bud --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) --layers \
+            --label git_commit=$(params.commit_id) \
+            --label git_message=$(params.commit_message) \
+            --label git_user=$(params.commit_user) \
+            -f /gen-source/Dockerfile.gen -t $(params.IMAGE) -t $(params.INCREMENTAL_BUILD_TAG) . 
+        fi
       image: $(params.BUILDER_IMAGE)
       name: build
       resources: {}
@@ -141,6 +141,16 @@ spec:
         - '--digestfile=$(workspaces.source.path)/image-digest'
         - $(params.IMAGE)
         - 'docker://$(params.IMAGE)'
+      image: $(params.BUILDER_IMAGE)
+      name: push
+      resources: {}
+      volumeMounts:
+        - mountPath: /var/lib/containers
+          name: varlibcontainers
+      workingDir: $(workspaces.source.path)
+    - script: >
+        [[ -n $(params.INCREMENTAL_BUILD_TAG) ]] &&
+        buildah push --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) $(params.INCREMENTAL_BUILD_TAG) docker://$(params.INCREMENTAL_BUILD_TAG)
       image: $(params.BUILDER_IMAGE)
       name: push
       resources: {}
