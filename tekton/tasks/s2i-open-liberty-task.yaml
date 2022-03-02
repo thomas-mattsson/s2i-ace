@@ -148,9 +148,11 @@ spec:
         - mountPath: /var/lib/containers
           name: varlibcontainers
       workingDir: $(workspaces.source.path)
-    - script: >
-        [[ -n $(params.INCREMENTAL_BUILD_TAG) ]] &&
-        buildah push --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) $(params.INCREMENTAL_BUILD_TAG) docker://$(params.INCREMENTAL_BUILD_TAG)
+    - script: |
+        if [ -n $(params.INCREMENTAL_BUILD_TAG) ]
+        then
+          buildah push --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) $(params.INCREMENTAL_BUILD_TAG) docker://$(params.INCREMENTAL_BUILD_TAG)
+        fi
       image: $(params.BUILDER_IMAGE)
       name: push-incremental
       resources: {}
