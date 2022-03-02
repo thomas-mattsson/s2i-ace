@@ -152,7 +152,7 @@ spec:
         [[ -n $(params.INCREMENTAL_BUILD_TAG) ]] &&
         buildah push --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) $(params.INCREMENTAL_BUILD_TAG) docker://$(params.INCREMENTAL_BUILD_TAG)
       image: $(params.BUILDER_IMAGE)
-      name: push
+      name: push-incremental
       resources: {}
       volumeMounts:
         - mountPath: /var/lib/containers
