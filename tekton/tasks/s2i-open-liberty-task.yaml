@@ -123,13 +123,13 @@ spec:
       workingDir: $(workspaces.source.path)
     - script: |-
         if [ -z "$(params.INCREMENTAL_BUILD_TAG)" ]; then
-          buildah bud --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) --layers \
+          buildah bud --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) --squash \
             --label git_commit=$(params.commit_id) \
             --label git_message=$(params.commit_message) \
             --label git_user=$(params.commit_user) \
             -f /gen-source/Dockerfile.gen -t $(params.IMAGE) .
         else
-          buildah bud --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) --layers \
+          buildah bud --storage-driver=vfs --tls-verify=$(params.TLSVERIFY) --squash \
             --label git_commit=$(params.commit_id) \
             --label git_message=$(params.commit_message) \
             --label git_user=$(params.commit_user) \
