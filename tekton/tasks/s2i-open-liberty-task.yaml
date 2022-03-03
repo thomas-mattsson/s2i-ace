@@ -104,7 +104,7 @@ spec:
         if [ -f "/env-params/incremental-tag-exists" ]; then
           # temporary workaround due to https://github.com/OpenLiberty/open-liberty-s2i/issues/43
           #s2i build $(params.PATH_CONTEXT) openliberty/open-liberty-s2i:$(params.VERSION) --image-scripts-url image:///usr/local/s2i \
-          s2i build $(params.PATH_CONTEXT) default-route-openshift-image-registry.vcc-cluster-fra02-2357dd4394b07a146216c9204c33478a-0000.eu-de.containers.appdomain.cloud/cp4i/open-liberty-s2i:22.0.0.1-java11 --image-scripts-url image:///usr/local/s2i \
+          s2i build $(params.PATH_CONTEXT) image-registry.openshift-image-registry.svc:5000/cp4i/open-liberty-s2i:22.0.0.1-java11 --image-scripts-url image:///usr/local/s2i \
             --as-dockerfile /gen-source/Dockerfile.gen --environment-file /env-params/env-file \
             --incremental $(params.INCREMENTAL_BUILD_TAG)
         else
