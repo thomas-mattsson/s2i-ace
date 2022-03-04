@@ -34,6 +34,10 @@ spec:
       description: When true, applicaton binaries will be copied to apps instead of dropins
       name: DEPLOY_TO_APPS
       type: string
+    - default: 'true'
+      name: TLS
+      description: Enable Transport Security in Liberty by adding the transportSecurity-1.0 feature
+      type: string
     - description: Location of the repo where image has to be pushed
       name: IMAGE
       type: string
@@ -64,6 +68,7 @@ spec:
           echo "MAVEN_ARGS=verify -Popenshift" > env-file
           # Support sonarqube
           echo "SONAR_USER_HOME=/tmp" >> env-file
+          echo "TLS=$(params.TLS)" >> env-file
 
           [[ '$(params.DEPLOY_TO_APPS)' != "" ]] &&
             echo "DEPLOY_TO_APPS=$(params.DEPLOY_TO_APPS)" >> env-file
