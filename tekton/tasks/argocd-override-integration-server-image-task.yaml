@@ -1,13 +1,15 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: argocd-override-integration-server-image
+  name: argocd-override-parameter
 spec:
   params:
     - name: flags
       default: --
     - name: argocd-version
       default: v2.2.5
+    - name: param
+      description: the parameter that should be overridden
     - name: gitrepo
     - name: gitrevision
   stepTemplate:
@@ -21,6 +23,6 @@ spec:
         repo=$(echo "$(params.gitrepo)" | sed -n "s/https:\/\/[^\/]*\/\([^/.]*\)\/\([^/.]*\)\(.git\)\?/\2/p")
         echo "Repo is $repo which will be used as application name"
         argocd login --insecure $ARGOCD_SERVER --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD
-        argocd app set $repo -p image.tag=$(params.gitrevision)
+        argocd app set $repo -p $(params.param)=$(params.gitrevision)
         argocd app sync $repo $(params.flags)
         argocd app wait $repo --health $(params.flags)
