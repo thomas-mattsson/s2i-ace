@@ -101,8 +101,12 @@ spec:
 
         if state == 'Succeeded':
           state = 'success'
-        elif state == 'Failure':
+        elif state == 'Failed':
           state = 'failure'
+        else:
+          print("Unknown pipeline state:")
+          print(state);
+          state = 'error'
 
         status_url = "$(params.API_PATH_PREFIX)" + "/repos/" + repo +
         "/statuses/" + "$(resources.inputs.source.revision)"
