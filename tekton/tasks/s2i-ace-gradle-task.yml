@@ -94,6 +94,7 @@ spec:
           fi
           
           echo "Generated Dockerfile:"
+          
           cat /gen-source/Dockerfile.gen  
       command:
         - /bin/bash
