@@ -82,7 +82,7 @@ spec:
       workingDir: /workspace/source
     - args:
         - '-c'
-        - >
+        - |
           if [ -z $(params.RUNTIME_IMAGE) ]; then
             echo "Using build image as runtime image."  
           else
