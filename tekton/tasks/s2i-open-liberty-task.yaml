@@ -8,7 +8,7 @@ spec:
     s2i-open-liberty task clones a Git repository and builds and pushes a container
     image using S2I and a Open Liberty Java builder image.
   params:
-    - default: 21.0.0.12-java11
+    - default: 22.0.0.1-java11
       description: The tag of open liberty s2i image (https://hub.docker.com/r/openliberty/open-liberty-s2i)
       name: VERSION
       type: string
