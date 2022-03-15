@@ -107,7 +107,7 @@ spec:
           state = 'success'
         elif state == 'Failed':
           state = 'failure'
-        else:
+        elif state != 'pending':
           print("Unknown pipeline state:")
           print(state);
           state = 'error'
