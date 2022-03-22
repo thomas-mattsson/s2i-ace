@@ -93,6 +93,15 @@ spec:
             COPY --from=0 --chown=aceuser:0 /home/aceuser/initial-config/bars/*.bar /home/aceuser/initial-config/bars/" >> /gen-source/Dockerfile.gen
           fi
           
+          echo "
+          RUN echo $'log4j.logger.org.apache.kafka=DEBUG, kafkaAppender \n\
+          log4j.appender.kafkaAppender=org.apache.log4j.FileAppender \n\
+          log4j.appender.kafkaAppender.File=/tmp/kafkadebug.log \n\
+          log4j.appender.kafkaAppender.Threshold=DEBUG \n\
+          log4j.appender.kafkaAppender.Append=true \n\
+          log4j.appender.kafkaAppender.layout=org.apache.log4j.PatternLayout \n\
+          log4j.appender.kafkaAppender.layout.ConversionPattern=[%d] %p %m (%c)%n \n\' > /home/aceuser/ace-server/log4j.properties" >> /gen-source/Dockerfile.gen
+          
           echo "Generated Dockerfile:"
           
           cat /gen-source/Dockerfile.gen  
