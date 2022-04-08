@@ -13,7 +13,7 @@ spec:
   output:
     to:
       kind: ImageStreamTag
-      name: 's2i-ace-maven:12.0.3.0'
+      name: 's2i-ace-maven:12.0.4.0'
   strategy:
     type: Docker
     dockerStrategy:
