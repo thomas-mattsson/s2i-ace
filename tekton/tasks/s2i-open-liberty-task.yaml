@@ -8,7 +8,7 @@ spec:
     s2i-open-liberty task clones a Git repository and builds and pushes a container
     image using S2I and a Open Liberty Java builder image.
   params:
-    - default: 22.0.0.1-java11
+    - default: 22.0.0.3-java11
       description: The tag of open liberty s2i image (https://hub.docker.com/r/openliberty/open-liberty-s2i)
       name: VERSION
       type: string
@@ -107,9 +107,7 @@ spec:
         fi
     - script: |-
         if [ -f "/env-params/incremental-tag-exists" ]; then
-          # temporary workaround due to https://github.com/OpenLiberty/open-liberty-s2i/issues/43
-          #s2i build $(params.PATH_CONTEXT) openliberty/open-liberty-s2i:$(params.VERSION) --image-scripts-url image:///usr/local/s2i \
-          s2i build $(params.PATH_CONTEXT) image-registry.openshift-image-registry.svc:5000/cp4i/open-liberty-s2i:22.0.0.1-java11 --image-scripts-url image:///usr/local/s2i \
+          s2i build $(params.PATH_CONTEXT) openliberty/open-liberty-s2i:$(params.VERSION) --image-scripts-url image:///usr/local/s2i \
             --as-dockerfile /gen-source/Dockerfile.gen --environment-file /env-params/env-file \
             --incremental $(params.INCREMENTAL_BUILD_TAG)
         else
