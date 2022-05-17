@@ -182,4 +182,4 @@ spec:
       name: gen-source
     - name: varlibcontainers
       persistentVolumeClaim:
-        claimName: s2i-ace-maven-varlibcontainers-pvc
+        claimName: s2i-ace-gradle-varlibcontainers-pvc
