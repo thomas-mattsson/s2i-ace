@@ -180,5 +180,6 @@ spec:
   volumes:
     - emptyDir: {}
       name: gen-source
-    - emptyDir: {}
-      name: varlibcontainers
+    - name: varlibcontainers
+      persistentVolumeClaim:
+        claimName: s2i-ace-maven-varlibcontainers-pvc
