@@ -1,6 +1,7 @@
-# ACE 12.0.3.0-r2 - see: https://www.ibm.com/docs/en/app-connect/containers_cd?topic=obtaining-app-connect-enterprise-server-image-from-cloud-container-registry 
-ARG ACE_BASE_IMAGE=cp.icr.io/cp/appc/ace-server-prod@sha256:dd92acece159fa682256b41d009f2bc05c25090ddf18be0e9ac63a09b3b0b666
-ARG BASE_IMAGE=registry.access.redhat.com/ubi8/ubi-minimal@sha256:cc2925acdbac0b199a3e51b51e7005b14a902addbcc238f12fd999947c2584da
+# For ACE Versions,see: https://www.ibm.com/docs/en/app-connect/containers_cd?topic=obtaining-app-connect-enterprise-server-image-from-cloud-container-registry 
+# Use ACE 12.0.4.0-r2
+ARG ACE_BASE_IMAGE=cp.icr.io/cp/appc/ace-server-prod@sha256:7eb8483de45c1634d09e24521b9d2f89a9e4d0c9b89a1a5d52cc4fd37a091234
+ARG BASE_IMAGE=registry.access.redhat.com/ubi8/ubi-minimal@sha256:9a81cce19ae2a962269d4a7fecd38aec60b852118ad798a265c3f6c4be0df610
 FROM $ACE_BASE_IMAGE as ace
 
 # Large number of layers in the ace-server-prod image, squash it to avoid bad performance when using vfs storage driver in builds
