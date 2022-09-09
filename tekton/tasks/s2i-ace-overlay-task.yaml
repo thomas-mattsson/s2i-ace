@@ -48,17 +48,9 @@ spec:
         https://github.com/thomas-mattsson/s2i-ace-maven repo.
       name: BUILD_IMAGE
       type: string
-  resources:
-    inputs:
-      - description: >-
-          The git repo with the source of the ACE build. A pom.xml file needs to
-          be at the root level.
-        name: source
-        type: git
-    outputs:
-      - name: builtImage
-        targetPath: /workspace/builtImage
-        type: image
+    - description: Location of the repo where image has to be pushed
+      name: IMAGE
+      type: string
   steps:
     - command:
         - s2i
@@ -149,7 +141,7 @@ spec:
         - '-f'
         - /gen-source/Dockerfile.gen
         - '-t'
-        - $(resources.outputs.builtImage.url)
+        - $(params.IMAGE)
         - .
       image: >-
         registry.redhat.io/rhel8/buildah@sha256:6a68ece207bc5fd8db2dd5cc2d0b53136236fb5178eb5b71eebe5d07a3c33d13
@@ -168,8 +160,8 @@ spec:
         - push
         - '--storage-driver=overlay'
         - '--tls-verify=$(params.TLSVERIFY)'
-        - $(resources.outputs.builtImage.url)
-        - 'docker://$(resources.outputs.builtImage.url)'
+        - $(params.IMAGE)
+        - 'docker://$(params.IMAGE)'
       image: >-
         registry.redhat.io/rhel8/buildah@sha256:6a68ece207bc5fd8db2dd5cc2d0b53136236fb5178eb5b71eebe5d07a3c33d13
       name: push
