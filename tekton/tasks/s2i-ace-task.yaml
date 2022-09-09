@@ -152,6 +152,6 @@ spec:
       name: gen-source
     - emptyDir: {}
       name: varlibcontainers
-   workspaces:
+  workspaces:
     - mountPath: /workspace/source
       name: source
