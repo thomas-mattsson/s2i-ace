@@ -52,10 +52,9 @@ RUN cd /usr/local && \
 COPY --from=ace-gradle-plugin --chown=aceuser:0 /app/ace-gradle-plugin /tmp/ace-gradle-plugin
 COPY --chown=aceuser:0 ./init.gradle /home/aceuser/.gradle/
 
-RUN gradle --no-daemon -g /home/aceuser/.gradle -p /tmp/ace-gradle-plugin publish && \
+RUN gradle -g /home/aceuser/.gradle -p /tmp/ace-gradle-plugin publish && \
     chown -R aceuser:0 /home/aceuser/.gradle && \
-    chown -R aceuser:0 /home/aceuser/mavenrepo && \
-    chmod -R g=u /home/aceuser/.gradle
+    chown -R aceuser:0 /home/aceuser/mavenrepo
 
 USER aceuser
 
