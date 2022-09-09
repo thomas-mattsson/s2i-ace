@@ -4,8 +4,8 @@ metadata:
   name: s2i-ace
 spec:
   description: >-
-    s2i-ace-gradle task clones a Git repository and builds and pushes a container
-    image using S2I, an App Connect Enterprise image and Gradle. The resulting
+    s2i-ace task clones a Git repository and builds and pushes a container
+    image using S2I, an App Connect Enterprise image and Maven/Gradle. The resulting
     image will be using the App Connect Enterprise integration server image from
     the entitlement registry.
   params:
@@ -38,9 +38,9 @@ spec:
     - default: NA
       name: commit_user
       type: string
-    - default: image-registry.openshift-image-registry.svc:5000/cp4i/s2i-ace-maven:12.0.3.0
+    - default: image-registry.openshift-image-registry.svc:5000/cp4i-ci/s2i-ace:12.0.5.0
       description: >-
-        The s2i-ace-maven image build from the https://github.com/thomas-mattsson/s2i-ace-maven repo.
+        The s2i-ace image build from the https://github.com/thomas-mattsson/s2i-ace repo.
       name: BUILD_IMAGE
       type: string
   resources:
@@ -93,17 +93,16 @@ spec:
             COPY --from=0 --chown=aceuser:0 /home/aceuser/initial-config/bars/*.bar /home/aceuser/initial-config/bars/" >> /gen-source/Dockerfile.gen
           fi
           
-          echo "
-          USER root
-          RUN bash -c \"echo $'log4j.logger.org.apache.kafka=DEBUG, kafkaAppender \n\
-          log4j.appender.kafkaAppender=org.apache.log4j.FileAppender \n\
-          log4j.appender.kafkaAppender.File=/tmp/kafkadebug.log \n\
-          log4j.appender.kafkaAppender.Threshold=DEBUG \n\
-          log4j.appender.kafkaAppender.Append=true \n\
-          log4j.appender.kafkaAppender.layout=org.apache.log4j.PatternLayout \n\
-          log4j.appender.kafkaAppender.layout.ConversionPattern=[%d] %p %m (%c)%n \n' >> /opt/ibm/ace-12/server/lib/log4j.properties\"
-          USER aceuser" >> /gen-source/Dockerfile.gen
-          
+          # echo "
+          # USER root
+          # RUN bash -c \"echo $'log4j.logger.org.apache.kafka=DEBUG, kafkaAppender \n\
+          # log4j.appender.kafkaAppender=org.apache.log4j.FileAppender \n\
+          # log4j.appender.kafkaAppender.File=/tmp/kafkadebug.log \n\
+          # log4j.appender.kafkaAppender.Threshold=DEBUG \n\
+          # log4j.appender.kafkaAppender.Append=true \n\
+          # log4j.appender.kafkaAppender.layout=org.apache.log4j.PatternLayout \n\
+          # log4j.appender.kafkaAppender.layout.ConversionPattern=[%d] %p %m (%c)%n \n' >> /opt/ibm/ace-12/server/lib/log4j.properties\"
+          # USER aceuser" >> /gen-source/Dockerfile.gen  
           
           echo "Generated Dockerfile:"
           

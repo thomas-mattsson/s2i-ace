@@ -4,10 +4,12 @@ metadata:
   name: s2i-ace-overlay
 spec:
   description: >-
-    s2i-ace task clones a Git repository and builds and pushes a
+    s2i-ace-overlay task clones a Git repository and builds and pushes a
     container image using S2I, an App Connect Enterprise image and Maven/Gradle. The
     resulting image will be using the App Connect Enterprise integration server
     image from the entitlement registry.
+    This version of the s2i-ace task is using overlay storage driver which also means
+    that service account executing needs to have privilige. 
   params:
     - default: .
       description: The location of the path to run s2i from.
@@ -40,7 +42,7 @@ spec:
       name: commit_user
       type: string
     - default: >-
-        image-registry.openshift-image-registry.svc:5000/cp4i/s2i-ace-maven:12.0.3.0
+        image-registry.openshift-image-registry.svc:5000/cp4i-ci/s2i-ace-maven:12.0.3.0
       description: >-
         The s2i-ace-maven image build from the
         https://github.com/thomas-mattsson/s2i-ace-maven repo.
@@ -97,27 +99,27 @@ spec:
           fi
 
 
-          echo "
+          # echo "
 
-          USER root
+          # USER root
 
-          RUN bash -c \"echo $'log4j.logger.org.apache.kafka=DEBUG,
-          kafkaAppender \n\
+          # RUN bash -c \"echo $'log4j.logger.org.apache.kafka=DEBUG,
+          # kafkaAppender \n\
 
-          log4j.appender.kafkaAppender=org.apache.log4j.FileAppender \n\
+          # log4j.appender.kafkaAppender=org.apache.log4j.FileAppender \n\
 
-          log4j.appender.kafkaAppender.File=/tmp/kafkadebug.log \n\
+          # log4j.appender.kafkaAppender.File=/tmp/kafkadebug.log \n\
 
-          log4j.appender.kafkaAppender.Threshold=DEBUG \n\
+          # log4j.appender.kafkaAppender.Threshold=DEBUG \n\
 
-          log4j.appender.kafkaAppender.Append=true \n\
+          # log4j.appender.kafkaAppender.Append=true \n\
 
-          log4j.appender.kafkaAppender.layout=org.apache.log4j.PatternLayout \n\
+          # log4j.appender.kafkaAppender.layout=org.apache.log4j.PatternLayout \n\
 
-          log4j.appender.kafkaAppender.layout.ConversionPattern=[%d] %p %m
-          (%c)%n \n' >> /opt/ibm/ace-12/server/lib/log4j.properties\"
+          # log4j.appender.kafkaAppender.layout.ConversionPattern=[%d] %p %m
+          # (%c)%n \n' >> /opt/ibm/ace-12/server/lib/log4j.properties\"
 
-          USER aceuser" >> /gen-source/Dockerfile.gen
+          # USER aceuser" >> /gen-source/Dockerfile.gen
 
 
 
@@ -182,4 +184,4 @@ spec:
       name: gen-source
     - name: varlibcontainers
       persistentVolumeClaim:
-        claimName: s2i-ace-gradle-varlibcontainers-pvc
+        claimName: s2i-ace-varlibcontainers-pvc
