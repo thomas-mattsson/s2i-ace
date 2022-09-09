@@ -1,1 +1,16 @@
-**/.DS_Store
+*
+!.gitignore
+!/buildconfig/
+!/buildconfig/**
+!/s2i/
+!/s2i/**
+!/tekton/
+!/tekton/**
+!/test/
+!/test/**
+/test/tmp
+!Dockerfile
+!Makefile
+!README.md
+!settings.xml
+!init.gradle

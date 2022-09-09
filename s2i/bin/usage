@@ -1,11 +1,13 @@
 #!/bin/bash -e
 cat <<EOF
-This is the s2i-ace-maven S2I image:
+This is the s2i-ace S2I image:
 To use it, install S2I: https://github.com/openshift/source-to-image
+
+Build requires either a build.gradle file (for Gradle build) or a pom.xml file (for Maven build) in the root directory
 
 Sample invocation:
 
-s2i build <source code path/URL> s2i-ace-maven <application image>
+s2i build <source code path/URL> s2i-ace <application image>
 
 You can then run the resulting image via:
 docker run <application image>

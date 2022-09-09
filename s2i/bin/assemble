@@ -1,13 +1,13 @@
 #!/bin/bash -e
 #
-# S2I assemble script for the 's2i-ace-maven' image.
+# S2I assemble script for the 's2i-ace' image.
 # The 'assemble' script builds your application source so that it is ready to run.
 #
 # For more information refer to the documentation:
 #	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
 #
 
-# If the 's2i-ace-maven' assemble script is executed with the '-h' flag, print the usage.
+# If the 's2i-ace' assemble script is executed with the '-h' flag, print the usage.
 if [[ "$1" == "-h" ]]; then
 	exec /usr/local/s2i/usage
 fi
@@ -27,5 +27,23 @@ echo "---> Installing application source..."
 cp -Rf /tmp/src/. /home/aceuser/src
 
 echo "---> Building application from source..."
-echo "Running gradle in root directory"
-gradle --no-daemon -q -g /home/aceuser -p /home/aceuser/src && mkdir -p /home/aceuser/initial-config/bars && mv /home/aceuser/src/build/*.bar /home/aceuser/initial-config/bars/
+
+if [ -f "/home/aceuser/src/build.gradle" ]; then
+  echo "Running gradle in root directory"
+  gradle --no-daemon --info -p /home/aceuser/src
+elif [ -f "/home/aceuser/src/pom.xml" ]; then
+  echo "Running mvn package in root directory"
+  unset PROSPECTIVE_MQSI_BASE_FILEPATH # Workaround since ace-maven-plugin does not support disabling mqsiprofile execution
+  mvn -Dinstall.work.directory=/home/aceuser/ace-server -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -B -f /home/aceuser/src/pom.xml package
+else
+  echo "Neither a build.gradle nor a pom.xml file was found in the root directory"
+  exit 1
+fi
+
+mkdir -p /home/aceuser/initial-config/bars
+shopt -s globstar
+mv -v /home/aceuser/src/**/*.bar /home/aceuser/initial-config/bars/
+shopt -u globstar
+
+
+

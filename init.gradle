@@ -1,0 +1,11 @@
+settingsEvaluated { settings ->
+    settings.pluginManagement {
+        repositories {
+            maven {
+                url = uri('/home/aceuser/mavenrepo')
+            }
+            gradlePluginPortal()
+        }
+        println "Setting plugin management repositories in init.gradle"
+    }
+}
