@@ -6,7 +6,7 @@ metadata:
 kind: BuildConfig
 apiVersion: build.openshift.io/v1
 metadata:
-  name: s2i-ace-gradle-build
+  name: s2i-ace-build
 spec:
   output:
     to:
