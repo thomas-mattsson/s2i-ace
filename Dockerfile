@@ -29,26 +29,32 @@ LABEL io.k8s.description="Platform for building App Connect Enterprise applicati
 
 USER root
 
-ARG GRADLE_VERSION=7.5.1
-
-# Export some environment variables
-ENV GRADLE_HOME=/usr/local/gradle-${GRADLE_VERSION}
-ENV PATH=$PATH:$GRADLE_HOME/bin
-
 RUN microdnf update && \
     microdnf install --nodocs \
     maven && \
     microdnf clean all && \
     rm -rf /var/cache/yum
 
+ARG GRADLE_VERSION=7.5.1
+
+# Export some environment variables
+ENV GRADLE_HOME=/usr/local/gradle-${GRADLE_VERSION}
+ENV PATH=$PATH:$GRADLE_HOME/bin
+
 # Download and install Gradle
 ENV GRADLE_ZIP gradle-${GRADLE_VERSION}-bin.zip
 RUN cd /usr/local && \
     curl -L https://services.gradle.org/distributions/${GRADLE_ZIP} -o ${GRADLE_ZIP} && \
     unzip ${GRADLE_ZIP} && \
-    rm ${GRADLE_ZIP} && \
-    gradle --no-daemon -q -g /home/aceuser/.gradle -v && \
+    rm ${GRADLE_ZIP}
+
+# Building the ace gradle plugin
+COPY --from=ace-gradle-plugin --chown=aceuser:0 /app/ace-gradle-plugin /tmp/ace-gradle-plugin
+COPY --chown=aceuser:0 ./init.gradle /home/aceuser/.gradle/
+
+RUN gradle --no-daemon -g /home/aceuser/.gradle -p /tmp/ace-gradle-plugin publish && \
     chown -R aceuser:0 /home/aceuser/.gradle && \
+    chown -R aceuser:0 /home/aceuser/mavenrepo && \
     chmod -R g=u /home/aceuser/.gradle
 
 USER aceuser
@@ -63,12 +69,6 @@ RUN mvn -f /tmp/ace-maven-plugin/ace-maven-plugin/pom.xml versions:set -DremoveS
     mvn -f /tmp/ace-maven-plugin/ace-maven-plugin/pom.xml -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -B package && \
     mvn install:install-file -Dfile=/tmp/ace-maven-plugin/ace-maven-plugin/target/ace-maven-plugin-12.0.3.jar -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -DpomFile=/tmp/ace-maven-plugin/ace-maven-plugin/pom.xml -DcreateChecksum=true -B && \
     rm -rf /tmp/ace-maven-plugin
-
-# Building the ace gradle plugin
-COPY --from=ace-gradle-plugin --chown=aceuser:0 /app/ace-gradle-plugin /tmp/ace-gradle-plugin
-COPY --chown=aceuser:0 ./init.gradle /home/aceuser/.gradle/
-
-RUN gradle --no-daemon -g /home/aceuser/.gradle -p /tmp/ace-gradle-plugin publish
 
 # To support local dependencies in maven
 ENV MQSI_BASE_FILEPATH=/opt/ibm/ace-12
