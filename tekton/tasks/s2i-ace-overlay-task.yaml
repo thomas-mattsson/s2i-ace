@@ -1,11 +1,11 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: s2i-ace-gradle-overlay
+  name: s2i-ace-overlay
 spec:
   description: >-
-    s2i-ace-gradle task clones a Git repository and builds and pushes a
-    container image using S2I, an App Connect Enterprise image and Gradle. The
+    s2i-ace task clones a Git repository and builds and pushes a
+    container image using S2I, an App Connect Enterprise image and Maven/Gradle. The
     resulting image will be using the App Connect Enterprise integration server
     image from the entitlement registry.
   params:
