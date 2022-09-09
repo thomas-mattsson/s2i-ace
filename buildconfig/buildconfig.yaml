@@ -22,7 +22,7 @@ spec:
     type: Git
     git:
       uri: 'https://github.com/thomas-mattsson/s2i-ace.git'
-      ref: main   
+      ref: ace-12   
   triggers:
     - type: ConfigChange
   runPolicy: Serial
