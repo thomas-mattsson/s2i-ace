@@ -1,9 +1,0 @@
-apiVersion: tekton.dev/v1alpha1
-kind: PipelineResource
-metadata:
-  name: s2i-ace-maven-image-resource
-spec:
-  type: image
-  params:
-    - name: url
-      value: 'image-registry.openshift-image-registry.svc:5000/my-namespace/s2i-ace-maven:12.0.2.0'
