@@ -54,7 +54,8 @@ COPY --chown=aceuser:0 ./init.gradle /home/aceuser/.gradle/
 
 RUN gradle -g /home/aceuser/.gradle -p /tmp/ace-gradle-plugin publish && \
     chown -R aceuser:0 /home/aceuser/.gradle && \
-    chown -R aceuser:0 /home/aceuser/mavenrepo
+    chown -R aceuser:0 /home/aceuser/mavenrepo && \
+    chmod -R g=u /home/aceuser/.gradle
 
 USER aceuser
 
