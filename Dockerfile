@@ -64,11 +64,10 @@ RUN mvn -f /tmp/ace-maven-plugin/ace-maven-plugin/pom.xml versions:set -DremoveS
 
 # Building the ace gradle plugin
 COPY --from=ace-gradle-plugin --chown=aceuser:0 /app/ace-gradle-plugin /tmp/ace-gradle-plugin
+COPY --chown=aceuser:0 ./init.gradle /home/aceuser/.gradle/
 
 RUN cd /tmp/ace-gradle-plugin && \
     gradle --no-daemon -g /home/aceuser/.gradle publish
-
-COPY --chown=aceuser:0 ./init.gradle /home/aceuser/.gradle/
 
 # To support local dependencies in maven
 ENV MQSI_BASE_FILEPATH=/opt/ibm/ace-12
