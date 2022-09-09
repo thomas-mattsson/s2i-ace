@@ -41,7 +41,10 @@ RUN \
     cd /usr/local && \
     curl -L https://services.gradle.org/distributions/${GRADLE_ZIP} -o ${GRADLE_ZIP} && \
     unzip ${GRADLE_ZIP} && \
-    rm ${GRADLE_ZIP}
+    rm ${GRADLE_ZIP} && \
+    gradle --no-deamon -q -g /home/aceuser/.gradle -v && \
+    chown -R aceuser:0 /home/aceuser/.gradle && \
+    chmod -R g=u /home/aceuser/.gradle
 
 RUN microdnf update \
  && microdnf install --nodocs \
@@ -67,11 +70,6 @@ COPY --from=ace-gradle-plugin --chown=aceuser:0 /app/ace-gradle-plugin /tmp/ace-
 COPY --chown=aceuser:0 ./init.gradle /home/aceuser/.gradle/
 
 RUN gradle --no-daemon -g /home/aceuser/.gradle -p /tmp/ace-gradle-plugin publish
-
-USER root
-RUN chown -R aceuser:0 /home/aceuser/.gradle && \
-    chmod -R g=u /home/aceuser/.gradle
-USER aceuser
 
 # To support local dependencies in maven
 ENV MQSI_BASE_FILEPATH=/opt/ibm/ace-12
