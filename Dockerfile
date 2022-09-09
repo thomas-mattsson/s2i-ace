@@ -35,7 +35,13 @@ ARG GRADLE_VERSION=7.5.1
 ENV GRADLE_HOME=/usr/local/gradle-${GRADLE_VERSION}
 ENV PATH=$PATH:$GRADLE_HOME/bin
 
-# Download and install Gradle
+RUN microdnf update \
+ && microdnf install --nodocs \
+    maven \
+ && microdnf clean all \
+ && rm -rf /var/cache/yum
+
+ # Download and install Gradle
 ENV GRADLE_ZIP gradle-${GRADLE_VERSION}-bin.zip
 RUN \
     cd /usr/local && \
@@ -45,12 +51,6 @@ RUN \
     gradle --no-deamon -q -g /home/aceuser/.gradle -v && \
     chown -R aceuser:0 /home/aceuser/.gradle && \
     chmod -R g=u /home/aceuser/.gradle
-
-RUN microdnf update \
- && microdnf install --nodocs \
-    maven \
- && microdnf clean all \
- && rm -rf /var/cache/yum
 
 USER aceuser
 
