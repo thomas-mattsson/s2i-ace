@@ -30,7 +30,7 @@ echo "---> Building application from source..."
 
 if [ -f "/home/aceuser/src/build.gradle" ]; then
   echo "Running gradle in root directory"
-  gradle --no-daemon --info -p /home/aceuser/src
+  gradle --no-daemon --info -g /home/aceuser/.gradle -p /home/aceuser/src
 elif [ -f "/home/aceuser/src/pom.xml" ]; then
   echo "Running mvn package in root directory"
   unset PROSPECTIVE_MQSI_BASE_FILEPATH # Workaround since ace-maven-plugin does not support disabling mqsiprofile execution

@@ -66,7 +66,7 @@ RUN mvn -f /tmp/ace-maven-plugin/ace-maven-plugin/pom.xml versions:set -DremoveS
 COPY --from=ace-gradle-plugin --chown=aceuser:0 /app/ace-gradle-plugin /tmp/ace-gradle-plugin
 
 RUN cd /tmp/ace-gradle-plugin && \
-    gradle --no-daemon publish
+    gradle --no-daemon -g /home/aceuser/.gradle publish
 
 COPY --chown=aceuser:0 ./init.gradle /home/aceuser/.gradle/
 

@@ -5,10 +5,10 @@ SCRIPTPATH=$(dirname "$SCRIPT")
 
 rm -rf "$SCRIPTPATH/tmp"
 
-# mkdir -p "$SCRIPTPATH/tmp/maven"
-# cd "$SCRIPTPATH/tmp/maven"
-# s2i build -c -e LICENSE=accept --scripts-url=image:///usr/local/s2i --as-dockerfile Dockerfile.maven.gen --assemble-user aceuser ../../test-app-maven $IMAGE_NAME
-# podman build -f Dockerfile.maven.gen
+mkdir -p "$SCRIPTPATH/tmp/maven"
+cd "$SCRIPTPATH/tmp/maven"
+s2i build -c -e LICENSE=accept --scripts-url=image:///usr/local/s2i --as-dockerfile Dockerfile.maven.gen --assemble-user aceuser ../../test-app-maven $IMAGE_NAME
+podman build -f Dockerfile.maven.gen
 
 mkdir -p "$SCRIPTPATH/tmp/gradle"
 cd "$SCRIPTPATH/tmp/gradle"
