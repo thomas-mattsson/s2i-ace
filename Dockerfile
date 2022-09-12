@@ -50,16 +50,11 @@ RUN cd /usr/local && \
     unzip ${GRADLE_ZIP} && \
     rm ${GRADLE_ZIP}
 
+USER aceuser
+
 # Building the ace gradle plugin
 COPY --from=ace-gradle-plugin --chown=aceuser:0 /app/ace-gradle-plugin /tmp/ace-gradle-plugin
 COPY --chown=aceuser:0 ./init.gradle /home/aceuser/.gradle/
-
-RUN gradle -g /home/aceuser/.gradle --no-daemon -p /tmp/ace-gradle-plugin publish && \
-    chown -R aceuser:0 /home/aceuser/.gradle && \
-    chown -R aceuser:0 /home/aceuser/mavenrepo && \
-    chmod -R g=u /home/aceuser/.gradle
-
-USER aceuser
 
 # Building the ace maven plugin
 COPY --from=ace-maven-plugin --chown=aceuser:0 /app/ace-maven-plugin /tmp/ace-maven-plugin
@@ -71,6 +66,8 @@ RUN mvn -f /tmp/ace-maven-plugin/ace-maven-plugin/pom.xml versions:set -DremoveS
     mvn -f /tmp/ace-maven-plugin/ace-maven-plugin/pom.xml -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -B package && \
     mvn install:install-file -Dfile=/tmp/ace-maven-plugin/ace-maven-plugin/target/ace-maven-plugin-12.0.3.jar -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -DpomFile=/tmp/ace-maven-plugin/ace-maven-plugin/pom.xml -DcreateChecksum=true -B && \
     rm -rf /tmp/ace-maven-plugin
+
+RUN gradle -g /home/aceuser/.gradle --no-daemon -p /tmp/ace-gradle-plugin publish
 
 # To support local dependencies in maven
 ENV MQSI_BASE_FILEPATH=/opt/ibm/ace-12
