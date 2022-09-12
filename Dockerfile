@@ -22,7 +22,7 @@ RUN git clone -b main https://github.com/thomas-mattsson/ace-gradle-plugin.git a
 FROM $ACE_BASE_IMAGE as ace
 
 LABEL maintainer="Thomas Mattsson <thomas.mattsson@se.ibm.com>"
-LABEL io.k8s.description="Platform for building App Connect Enterprise applications into integration server using Gradle" \
+LABEL io.k8s.description="Platform for building App Connect Enterprise applications into integration server using Maven/Gradle" \
      io.k8s.display-name="IBM App Connect Enterprise 12.0.5.0-r3" \
      io.openshift.tags="ace,12.0,12.0.5.0-r3" \
      io.openshift.s2i.scripts-url=image:///usr/local/s2i
