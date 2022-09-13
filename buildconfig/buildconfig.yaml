@@ -1,0 +1,28 @@
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: s2i-ace
+---
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: s2i-ace-build
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 's2i-ace:12.0.5.0'
+  strategy:
+    type: Docker
+    dockerStrategy:
+      imageOptimizationPolicy: SkipLayers
+      pullSecret:
+        name: "ibm-entitlement-key"
+  source:
+    type: Git
+    git:
+      uri: 'https://github.com/thomas-mattsson/s2i-ace.git'
+      ref: ace-12   
+  triggers:
+    - type: ConfigChange
+  runPolicy: Serial

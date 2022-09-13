@@ -1,0 +1,159 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: s2i-ace
+spec:
+  description: >-
+    s2i-ace task clones a Git repository and builds and pushes a container
+    image using S2I, an App Connect Enterprise image and Maven/Gradle. The resulting
+    image will be using the App Connect Enterprise integration server image from
+    the entitlement registry.
+  params:
+    - default: .
+      description: The location of the path to run s2i from.
+      name: PATH_CONTEXT
+      type: string
+    - default: 'true'
+      description: >-
+        Verify the TLS on the registry endpoint (for push/pull to a non-TLS
+        registry)
+      name: TLSVERIFY
+      type: string
+    - default: not_accept
+      description: Must be set to "accept" to run
+      name: LICENSE
+      type: string
+    - default: ''
+      description: >-
+        The runtime image to use. Should be an integration server image from the
+        entitled registry. Default is leaving it empty to use the s2i build image as runtime image.
+      name: RUNTIME_IMAGE
+      type: string
+    - default: NA
+      name: commit_id
+      type: string
+    - default: NA
+      name: commit_message
+      type: string
+    - default: NA
+      name: commit_user
+      type: string
+    - default: image-registry.openshift-image-registry.svc:5000/cp4i-ci/s2i-ace:12.0.5.0
+      description: >-
+        The s2i-ace image build from the https://github.com/thomas-mattsson/s2i-ace repo.
+      name: BUILD_IMAGE
+      type: string
+    - description: Location of the repo where image is to be pushed
+      name: IMAGE
+      type: string
+  steps:
+    - command:
+        - s2i
+        - build
+        - '-e'
+        - LICENSE=$(params.LICENSE)
+        - $(params.PATH_CONTEXT)
+        - >-
+          $(params.BUILD_IMAGE)
+        - '--assemble-user'
+        - aceuser
+        - '--image-scripts-url'
+        - 'image:///usr/local/s2i'
+        - '--as-dockerfile'
+        - /gen-source/Dockerfile.gen
+      image: registry.redhat.io/ocp-tools-4-tech-preview/source-to-image-rhel8@sha256:ba51e5e74ff5a29fd429b0bb77bc2130e5284826a60d042fc4e4374381a7a308
+      name: generate
+      resources:
+        requests:
+          memory: "100Mi"
+          cpu: "500m"
+        limits:
+          memory: "1Gi"
+          cpu: "1"
+      volumeMounts:
+        - mountPath: /gen-source
+          name: gen-source
+      workingDir: /workspace/source
+    - args:
+        - '-c'
+        - |
+          if [ -z $(params.RUNTIME_IMAGE) ]; then
+            echo "Using build image as runtime image."  
+          else
+            echo "
+            FROM $(params.RUNTIME_IMAGE)
+            ENV LICENSE=$(params.LICENSE)
+            # To support JVM debug EXPOSE 8888
+            COPY --from=0 --chown=aceuser:0 /home/aceuser/initial-config/bars/*.bar /home/aceuser/initial-config/bars/" >> /gen-source/Dockerfile.gen
+          fi
+          
+          # echo "
+          # USER root
+          # RUN bash -c \"echo $'log4j.logger.org.apache.kafka=DEBUG, kafkaAppender \n\
+          # log4j.appender.kafkaAppender=org.apache.log4j.FileAppender \n\
+          # log4j.appender.kafkaAppender.File=/tmp/kafkadebug.log \n\
+          # log4j.appender.kafkaAppender.Threshold=DEBUG \n\
+          # log4j.appender.kafkaAppender.Append=true \n\
+          # log4j.appender.kafkaAppender.layout=org.apache.log4j.PatternLayout \n\
+          # log4j.appender.kafkaAppender.layout.ConversionPattern=[%d] %p %m (%c)%n \n' >> /opt/ibm/ace-12/server/lib/log4j.properties\"
+          # USER aceuser" >> /gen-source/Dockerfile.gen  
+          
+          echo "Generated Dockerfile:"
+          
+          cat /gen-source/Dockerfile.gen  
+      command:
+        - /bin/bash
+      image: registry.access.redhat.com/ubi8/ubi
+      name: stage-dockerfile
+      resources: {}
+      volumeMounts:
+        - mountPath: /gen-source
+          name: gen-source
+    - command:
+        - buildah
+        - bud
+        - '--storage-driver=vfs'
+        - '--tls-verify=$(params.TLSVERIFY)'
+        - '--label'
+        - git_commit=$(params.commit_id)
+        - '--label'
+        - git_message=$(params.commit_message)
+        - '--label'
+        - git_user=$(params.commit_user)
+        - '-f'
+        - /gen-source/Dockerfile.gen
+        - '-t'
+        - $(params.IMAGE)
+        - .
+      image: >-
+        registry.redhat.io/rhel8/buildah@sha256:6a68ece207bc5fd8db2dd5cc2d0b53136236fb5178eb5b71eebe5d07a3c33d13
+      name: build
+      resources: {}
+      volumeMounts:
+        - mountPath: /var/lib/containers
+          name: varlibcontainers
+        - mountPath: /gen-source
+          name: gen-source
+      workingDir: /gen-source
+    - command:
+        - buildah
+        - push
+        - '--storage-driver=vfs'
+        - '--tls-verify=$(params.TLSVERIFY)'
+        - $(params.IMAGE)
+        - 'docker://$(params.IMAGE)'
+      image: >-
+        registry.redhat.io/rhel8/buildah@sha256:6a68ece207bc5fd8db2dd5cc2d0b53136236fb5178eb5b71eebe5d07a3c33d13
+      name: push
+      resources: {}
+      volumeMounts:
+        - mountPath: /var/lib/containers
+          name: varlibcontainers
+  volumes:
+    - emptyDir: {}
+      name: gen-source
+    - emptyDir: {}
+      name: varlibcontainers
+  workspaces:
+    - mountPath: /workspace/source
+      name: source

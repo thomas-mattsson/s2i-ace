@@ -1,0 +1,18 @@
+#!/bin/bash
+IMAGE_NAME=${IMAGE_NAME-candidate}
+SCRIPT=$(realpath "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+
+rm -rf "$SCRIPTPATH/tmp"
+
+mkdir -p "$SCRIPTPATH/tmp/maven"
+cd "$SCRIPTPATH/tmp/maven"
+s2i build -c -e LICENSE=accept --scripts-url=image:///usr/local/s2i --as-dockerfile Dockerfile.maven.gen --assemble-user aceuser ../../test-app-maven $IMAGE_NAME
+podman build -f Dockerfile.maven.gen
+
+mkdir -p "$SCRIPTPATH/tmp/gradle"
+cd "$SCRIPTPATH/tmp/gradle"
+s2i build -c -e LICENSE=accept --scripts-url=image:///usr/local/s2i --as-dockerfile Dockerfile.gradle.gen --assemble-user aceuser ../../test-app-gradle/MyExampleApplication $IMAGE_NAME
+podman build -f Dockerfile.gradle.gen
+
+#s2i build -c -e LICENSE=accept . s2i-ace-maven:latest test-s2i --runtime-image=cp.icr.io/cp/appc/ace-server-prod@sha256:8598eef24c097e467bfa33499e62fe0dcfbfd817d877bd2347c857870b47b8fa --runtime-artifact=/home/aceuser/initial-config/bars:initial-config/bars --assemble-runtime-user aceuser

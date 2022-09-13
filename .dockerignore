@@ -1,1 +1,6 @@
-pipelines
+*
+!/s2i
+!/s2i/*
+!settings.xml
+!init.gradle
+

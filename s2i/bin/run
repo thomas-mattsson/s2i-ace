@@ -6,10 +6,4 @@
 # For more information see the documentation:
 #	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
 #
-cat <<EOF
-This s2i image is intended as a build image only.
-
-Use method described here: https://github.com/openshift/source-to-image/blob/master/docs/runtime_image.md
-EOF
-
-
+runaceserver
