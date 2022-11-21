@@ -61,7 +61,7 @@ spec:
         - 'image:///usr/local/s2i'
         - '--as-dockerfile'
         - /gen-source/Dockerfile.gen
-      image: registry.redhat.io/ocp-tools-4-tech-preview/source-to-image-rhel8@sha256:ba51e5e74ff5a29fd429b0bb77bc2130e5284826a60d042fc4e4374381a7a308
+      image: registry.redhat.io/ocp-tools-4-tech-preview/source-to-image-rhel8@sha256:d30b9987c0efb70b60f5378aef725c6f89697409af48fd73ca2c566c7b3c3601
       name: generate
       resources:
         requests:
@@ -126,7 +126,7 @@ spec:
         - $(params.IMAGE)
         - .
       image: >-
-        registry.redhat.io/rhel8/buildah@sha256:6a68ece207bc5fd8db2dd5cc2d0b53136236fb5178eb5b71eebe5d07a3c33d13
+        registry.redhat.io/rhel8/buildah:8.7-5
       name: build
       resources: {}
       volumeMounts:
@@ -143,7 +143,7 @@ spec:
         - $(params.IMAGE)
         - 'docker://$(params.IMAGE)'
       image: >-
-        registry.redhat.io/rhel8/buildah@sha256:6a68ece207bc5fd8db2dd5cc2d0b53136236fb5178eb5b71eebe5d07a3c33d13
+        registry.redhat.io/rhel8/buildah:8.7-5
       name: push
       resources: {}
       volumeMounts:
