@@ -132,7 +132,7 @@ spec:
     - command:
         - buildah
         - bud
-        - '--storage-driver=overlay'
+        - '--storage-driver=overlay2'
         - '--tls-verify=$(params.TLSVERIFY)'
         - '--label'
         - git_commit=$(params.commit_id)
@@ -160,7 +160,7 @@ spec:
     - command:
         - buildah
         - push
-        - '--storage-driver=overlay'
+        - '--storage-driver=overlay2'
         - '--tls-verify=$(params.TLSVERIFY)'
         - $(params.IMAGE)
         - 'docker://$(params.IMAGE)'
