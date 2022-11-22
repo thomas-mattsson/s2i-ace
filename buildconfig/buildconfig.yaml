@@ -14,15 +14,15 @@ spec:
       name: 's2i-ace:12.0.6.0-r1'
   strategy:
     type: Docker
-    # set ACE_BASE_IMAGE to the version to use as base:
-    # https://www.ibm.com/docs/en/app-connect/containers_cd?topic=obtaining-app-connect-enterprise-server-image-from-cloud-container-registry
-    buildArgs:
-      - name: ACE_BASE_IMAGE
-        value: cp.icr.io/cp/appc/ace-server-prod@sha256:3dbcc7caa22b0b0e6a5467cbb1a6086fafa0e125682dee4d2f51b7a59cecc766
     dockerStrategy:
       imageOptimizationPolicy: SkipLayers
       pullSecret:
         name: "ibm-entitlement-key"
+      # set ACE_BASE_IMAGE to the version to use as base:
+      # https://www.ibm.com/docs/en/app-connect/containers_cd?topic=obtaining-app-connect-enterprise-server-image-from-cloud-container-registry
+      buildArgs:
+        - name: ACE_BASE_IMAGE
+          value: cp.icr.io/cp/appc/ace-server-prod@sha256:3dbcc7caa22b0b0e6a5467cbb1a6086fafa0e125682dee4d2f51b7a59cecc766
   source:
     type: Git
     git:
