@@ -1,5 +1,5 @@
 plugins {
-    id 'ibm-ace' version '0.1'
+    id 'ibm-ace' version '0.2'
 }
 
 defaultTasks 'bar'

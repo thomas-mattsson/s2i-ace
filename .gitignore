@@ -16,3 +16,4 @@
 !settings.xml
 !init.gradle
 **/.DS_Store
+**/.gradle
