@@ -74,8 +74,8 @@ Besides the pom.xml files needed for the ace projects, a pom.xml is also needed 
 
 ### Task for building using the ACE S2I image
 
-Add [tekton/tasks/s2i-ace-task.yml](tekton/tasks/s2i-ace-task.yml) as a Openshift Pipeline task. Make sure to update the namespace name to match your Openshift project.
+Add [tekton/tasks/s2i-ace-task.yaml](tekton/tasks/s2i-ace-task.yaml) as a Openshift Pipeline task. Make sure to update the namespace name to match your Openshift project.
 
 Task also allows to provide a different runtime image instead of the build image (which would be larger due to the added build files) by setting the `RUNTIME_IMAGE` parameter. See documentation for the different parameters in the task.
 
-There is also a [tekton/tasks/s2i-ace-overlay-task.yml](tekton/tasks/s2i-ace-overlay-task.yml) task that does the same thing, but is using the buildah `overlay2` storage driver instead of `vfs`. Task is also setup to use a PVC with the name `s2i-ace-varlibcontainers-pvc` that would need to be created with a block storage class. This will be used for storing the layers built by `buildah` and will speed up the pipelines considerably. Note however that the `pipeline` service account would need to be allowed to run as privileged to use any other storage driver than `vfs`.
+There is also a [tekton/tasks/s2i-ace-overlay-task.yaml](tekton/tasks/s2i-ace-overlay-task.yaml) task that does the same thing, but is using the buildah `overlay2` storage driver instead of `vfs`. Task is also setup to use a PVC with the name `s2i-ace-varlibcontainers-pvc` that would need to be created with a block storage class. This will be used for storing the layers built by `buildah` and will speed up the pipelines considerably. Note however that the `pipeline` service account would need to be allowed to run as privileged to use any other storage driver than `vfs`.
