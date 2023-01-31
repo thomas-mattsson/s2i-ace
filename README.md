@@ -3,6 +3,7 @@
 First of all look at the following repos for great examples on creating containerized ACE:
 
 <https://github.com/ot4i/ace-demo-pipeline>
+
 <https://github.com/ot4i/ace-docker>
 
 The main purpose for this image is to allow for building ACE projects as part of Openshift pipelines. Maven or Gradle is used to facilitate the build of the project and either a `pom.xml` or a `build.gradle` file needs to be present.
@@ -14,7 +15,9 @@ The ACE S2I builder is only meant as a build image and not actually use it as a 
 <https://github.com/openshift/source-to-image/blob/master/docs/runtime_image.md>
 
 Execution from the command line would for example be:
-`s2i build -c -e LICENSE=accept . s2i-ace:latest test-s2i --runtime-image=cp.icr.io/cp/appc/ace-server-prod@sha256:8598eef24c097e467bfa33499e62fe0dcfbfd817d877bd2347c857870b47b8fa --runtime-artifact=/tmp:initial-config/bars --assemble-runtime-user aceuser`
+```bash
+s2i build -c -e LICENSE=accept . s2i-ace:latest test-s2i --runtime-image=cp.icr.io/cp/appc/ace-server-prod@sha256:8598eef24c097e467bfa33499e62fe0dcfbfd817d877bd2347c857870b47b8fa --runtime-artifact=/tmp:initial-config/bars --assemble-runtime-user aceuser
+```
 
 For Openshift pipelines however, `--runtime-image` can not be used since s2i is only used for generating the dockerfile. Instead a task is provided here to package the build artifacts properly.
 
