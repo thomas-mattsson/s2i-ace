@@ -11,7 +11,7 @@ spec:
   output:
     to:
       kind: ImageStreamTag
-      name: 's2i-ace:12.0.6.0-r1'
+      name: 's2i-ace:12.0.7.0-r2'
   strategy:
     type: Docker
     dockerStrategy:
@@ -22,7 +22,7 @@ spec:
       # https://www.ibm.com/docs/en/app-connect/containers_cd?topic=obtaining-app-connect-enterprise-server-image-from-cloud-container-registry
       buildArgs:
         - name: ACE_BASE_IMAGE
-          value: cp.icr.io/cp/appc/ace-server-prod@sha256:3dbcc7caa22b0b0e6a5467cbb1a6086fafa0e125682dee4d2f51b7a59cecc766
+          value: cp.icr.io/cp/appc/ace-server-prod@sha256:9b679f0b1784d04e23796c25894763b26546b0966c93f82b504a260370e2be35
   source:
     type: Git
     git:

@@ -2,24 +2,45 @@
 
 First of all look at the following repos for great examples on creating containerized ACE:
 
-https://github.com/ot4i/ace-demo-pipeline
+<https://github.com/ot4i/ace-demo-pipeline>
+<https://github.com/ot4i/ace-docker>
 
-https://github.com/ot4i/ace-docker
-
-The main purpose for this image is to allow for building ACE projects as part of Openshift pipelines.
+The main purpose for this image is to allow for building ACE projects as part of Openshift pipelines. Maven or Gradle is used to facilitate the build of the project and either a `pom.xml` or a `build.gradle` file needs to be present.
 Besides the image itself, a tekton task is provided to support a build from git to an integration server image.
+
+For more information around S2I see: <https://github.com/openshift/source-to-image>
 
 The ACE S2I builder is only meant as a build image and not actually use it as a runtime image as can be read about here:
 <https://github.com/openshift/source-to-image/blob/master/docs/runtime_image.md>
 
 Execution from the command line would for example be:
-`s2i build -c -e LICENSE=accept . s2i-ace-maven:latest test-s2i --runtime-image=cp.icr.io/cp/appc/ace-server-prod@sha256:8598eef24c097e467bfa33499e62fe0dcfbfd817d877bd2347c857870b47b8fa --runtime-artifact=/tmp:initial-config/bars --assemble-runtime-user aceuser`
+`s2i build -c -e LICENSE=accept . s2i-ace:latest test-s2i --runtime-image=cp.icr.io/cp/appc/ace-server-prod@sha256:8598eef24c097e467bfa33499e62fe0dcfbfd817d877bd2347c857870b47b8fa --runtime-artifact=/tmp:initial-config/bars --assemble-runtime-user aceuser`
 
 For Openshift pipelines however, `--runtime-image` can not be used since s2i is only used for generating the dockerfile. Instead a task is provided here to package the build artifacts properly.
 
-## Maven
+## Building the image
 
-Maven is used for managing the build of the ACE project. The [ace-maven-plugin](https://github.com/ot4i/ace-maven-plugin) is also included into this image. Image is currently using the version at https://github.com/thomas-mattsson/ace-maven-plugin that introduces support for ACE 12 test projects allowing JUnit tests to be executed as part of the build process.
+Image can be built locally with `make build`. Unit tests can be executed with `make test`. Podman is being used for the build, and it's necessery to login to the IBM entitlement container registry.
+
+A [build config](buildconfig/buildconfig.yaml) has been provided to build the image in an Openshift cluster. A `ibm-entitlement-key` secret is required to build the ACE base image following instructions here: <https://www.ibm.com/docs/en/cloud-paks/cp-integration/2022.4?topic=ayekoi-applying-your-entitlement-key-using-ui-online-installation>
+
+## Gradle/Maven
+
+Image contains both Gradle and Maven supporting either of them for building the ACE project. Additionally the [ACE Maven plugin](https://github.com/ot4i/ace-maven-plugin) and [ACE Gradle plugin](https://github.com/thomas-mattsson/ace-gradle-plugin) is added to the image as they are currently not published in any public maven repository.
+
+The image will look for a `build.gradle` or a `pom.xml` file in the root of the build directory. If both are found, `build.gradle` will be prioritized.
+
+### Gradle
+
+In case of a `build.gradle` file being present in the build directory, the image will execute gradle without any explicit tasks. Adding default tasks to the `build.gradle` file would be necessary. Any bar files that would be existed in the build directory would be copied to the final image.
+
+<https://github.com/thomas-mattsson/ace-gradle-plugin> is included in the image making it easy to build and test ACE projects. For an example project see here: <https://github.com/thomas-mattsson/ace-gradle-plugin/tree/main/sample/ace-hello-world>.
+
+### Maven
+
+In case of a `pom.xml` file being present in the build directory, Maven will be used to facilitate the build by calling `mvn package`.
+
+Image is currently using the version at <https://github.com/ChrWeissDe/ace-maven-plugin> instead of <https://github.com/ot4i/ace-maven-plugin> that introduces support for ACE 12 test projects allowing JUnit tests to be executed as part of the build process.
 
 More information on how that can be used in a CI/CD context can be read about here:
 <https://community.ibm.com/community/user/integration/viewdocument/ibm-ace-v11-continuous-integration>
@@ -48,138 +69,10 @@ Besides the pom.xml files needed for the ace projects, a pom.xml is also needed 
 
 ## Openshift Pipelines/Tekton
 
-### Pipeline for building this image itself
+### Task for building using the ACE S2I image
 
-Add [tekton/build-s2i-ace-maven-pipeline.yml](tekton/build-s2i-ace-maven-pipeline.yml) as a Openshift Pipeline. Make sure to update the namespace name to match your Openshift project.
+Add [tekton/s2i-ace-task.yml](tekton/s2i-ace-task.yml) as a Openshift Pipeline task. Make sure to update the namespace name to match your Openshift project.
 
-Pipeline takes a git source as input (this git repo) and an image output. Use `image-registry.openshift-image-registry.svc:5000/mvp/s2i-ace-maven:11.0.0.12` as image URL for using the internal image registry and using the tag with the currently matching version. If using other image repository or tag, make sure to update the task below to match.
+Task also allows to provide a different runtime image instead of the build image (which would be larger due to the added build files) by setting the `RUNTIME_IMAGE` parameter. See documentation for the different parameters in the task.
 
-### Task for building an integration server
-
-Add [tekton/s2i-ace-maven-task.yml](tekton/s2i-ace-maven-task.yml) as a Openshift Pipeline task. Make sure to update the namespace name to match your Openshift project.
-
-Task is also setup to use a PVC with the name `s2i-ace-maven-varlibcontainers-pvc` that would need to be created with a block storage class. This will be used for storing the s2i container and the resulting integration servers.
-
-### Deploying the integration server
-
-There are several tasks for deploying integration servers based on template files.
-
-#### Deploying single integration server based on template and parameters
-
-[tekton/ace-integration-server-deployment-task.yml](tekton/ace-integration-server-deployment-task.yml)
-
-#### Deploying multiple integration servers based on template and parameter files
-
-[tekton/ace-deploy-integration-servers-task.yml](tekton/ace-deploy-integration-servers-task.yml)
-
-#### Deploying configurations based on template
-
-[tekton/ace-configuration-policy-project-deployment-task.yml](tekton/ace-configuration-policy-project-deployment-task.yml)
-[tekton/ace-configuration-serverconf-deployment-task.yml](tekton/ace-configuration-serverconf-deployment-task.yml)
-
-#### Creating the pipeline
-
-Pipeline at [tekton/build-and-deploy-pipeline.yml](tekton/build-and-deploy-pipeline.yml) is an example on how to have an ingration with github, building the integration server with new tag for each build, also tagging with `latest`, and deploying to a dev environment using templates.
-
-## Reference: Creating a basic S2I builder image  
-
-### Files and Directories  
-
-| File                   | Required? | Description                                                  |
-|------------------------|-----------|--------------------------------------------------------------|
-| Dockerfile             | Yes       | Defines the base builder image                               |
-| s2i/bin/assemble       | Yes       | Script that builds the application                           |
-| s2i/bin/usage          | No        | Script that prints the usage of the builder                  |
-| s2i/bin/run            | Yes       | Script that runs the application                             |
-| s2i/bin/save-artifacts | No        | Script for incremental builds that saves the built artifacts |
-| test/run               | No        | Test script for the builder image                            |
-| test/test-app          | Yes       | Test application source code                                 |
-
-#### Dockerfile
-
-Create a *Dockerfile* that installs all of the necessary tools and libraries that are needed to build and run our application.  This file will also handle copying the s2i scripts into the created image.
-
-#### S2I scripts
-
-##### assemble
-
-Create an *assemble* script that will build our application, e.g.:
-
-- build python modules
-- bundle install ruby gems
-- setup application specific configuration
-
-The script can also specify a way to restore any saved artifacts from the previous image.
-
-##### run
-
-Create a *run* script that will start the application.
-
-##### save-artifacts (optional)
-
-Create a *save-artifacts* script which allows a new build to reuse content from a previous version of the application image.
-
-##### usage (optional)
-
-Create a *usage* script that will print out instructions on how to use the image.
-
-##### Make the scripts executable
-
-Make sure that all of the scripts are executable by running *chmod +x s2i/bin/**
-
-#### Create the builder image
-
-The following command will create a builder image named s2i-ace-maven based on the Dockerfile that was created previously.
-
-```
-docker build -t s2i-ace-maven .
-```
-
-The builder image can also be created by using the *make* command since a *Makefile* is included.
-
-Once the image has finished building, the command *s2i usage s2i-ace-maven* will print out the help info that was defined in the *usage* script.
-
-#### Testing the builder image
-
-The builder image can be tested using the following commands:
-
-```
-docker build -t s2i-ace-maven-candidate .
-IMAGE_NAME=s2i-ace-maven-candidate test/run
-```
-
-The builder image can also be tested by using the *make test* command since a *Makefile* is included.
-
-#### Creating the application image
-
-The application image combines the builder image with your applications source code, which is served using whatever application is installed via the *Dockerfile*, compiled using the *assemble* script, and run using the *run* script.
-The following command will create the application image:
-
-```
-s2i build test/test-app s2i-ace-maven s2i-ace-maven-app
----> Building and installing application from source...
-```
-
-Using the logic defined in the *assemble* script, s2i will now create an application image using the builder image as a base and including the source code from the test/test-app directory.
-
-#### Running the application image
-
-Running the application image is as simple as invoking the docker run command:
-
-```
-docker run -d -p 8080:8080 s2i-ace-maven-app
-```
-
-The application, which consists of a simple static web page, should now be accessible at  [http://localhost:8080](http://localhost:8080).
-
-#### Using the saved artifacts script
-
-Rebuilding the application using the saved artifacts can be accomplished using the following command:
-
-```
-s2i build --incremental=true test/test-app nginx-centos7 nginx-app
----> Restoring build artifacts...
----> Building and installing application from source...
-```
-
-This will run the *save-artifacts* script which includes the custom code to backup the currently running application source, rebuild the application image, and then re-deploy the previously saved source using the *assemble* script.
+There is also a [tekton/s2i-ace-overlay-task.yml](tekton/s2i-ace-overlay-task.yml) task that does the same thing, but is using the buildah `overlay2` storage driver instead of `vfs`. Task is also setup to use a PVC with the name `s2i-ace-varlibcontainers-pvc` that would need to be created with a block storage class. This will be used for storing the layers built by `buildah` and will speed up the pipelines considerably. Note however that the `pipeline` service account would need to be allowed to run as privileged to use any other storage driver than `vfs`.

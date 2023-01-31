@@ -41,8 +41,7 @@ spec:
     - default: NA
       name: commit_user
       type: string
-    - default: >-
-        image-registry.openshift-image-registry.svc:5000/cp4i-ci/s2i-ace-maven:12.0.3.0
+    - default: image-registry.openshift-image-registry.svc:5000/cp4i-ci/s2i-ace:12.0.7.0-r2
       description: >-
         The s2i-ace-maven image build from the
         https://github.com/thomas-mattsson/s2i-ace-maven repo.

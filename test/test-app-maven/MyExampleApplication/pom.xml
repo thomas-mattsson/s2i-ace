@@ -18,14 +18,14 @@
 			<plugin>
 				<groupId>ibm.maven.plugins</groupId>
 				<artifactId>ace-maven-plugin</artifactId>
-				<version>12.0.3</version>
+				<version>12.0.4</version>
 
 				<configuration>
 					<toolkitInstallDir>${ace.dir}</toolkitInstallDir>	
 					<aceRunDir>${ace.rundir}</aceRunDir>
 					<!-- <barName>${project.build.directory}/${project.artifactId}.bar</barName> -->
 					<toolkitVersion>${ace.version}</toolkitVersion>
-                    <ibmintPackage>true</ibmintPackage>
+                    <ibmint>true</ibmint>
                     <doNotCompileJava>false</doNotCompileJava>
                     <applyBarOverride>false</applyBarOverride>
 				</configuration>

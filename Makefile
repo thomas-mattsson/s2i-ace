@@ -7,4 +7,4 @@ build:
 .PHONY: test
 test:
 	podman build -t $(IMAGE_NAME)-candidate .
-	IMAGE_NAME=$(IMAGE_NAME)-candidate test/run
+	IMAGE_NAME=localhost/$(IMAGE_NAME)-candidate test/run
